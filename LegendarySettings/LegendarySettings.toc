@@ -1,0 +1,11 @@
+## Title: LegendarySettings
+## Version: 1.0
+## Author: xkaneto
+## Interface: 100207
+
+## DefaultState: Enabled
+
+## SavedVariables: LegendarySettingsDB
+
+Frame.xml
+
