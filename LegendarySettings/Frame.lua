@@ -342,7 +342,7 @@ function LS.InitTabs(...)
 	texture:SetAllPoints()
 	texture:SetPoint("TOPLEFT", SettingsFrameIconHeader ,"TOPLEFT", 34, -1)
 	texture:SetPoint("BOTTOMRIGHT", SettingsFrameIconHeader ,"BOTTOMRIGHT", -34, 1)
-	texture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\epic3d")
+	texture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\legendary")
 	SettingsFrameIconHeader.texture = texture
 
 	SettingsFrameTabs:SetBackdrop(backdropInfo);
