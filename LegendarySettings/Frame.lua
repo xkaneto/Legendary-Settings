@@ -412,22 +412,11 @@ function LS.InitTabs(...)
 	LS.AddSlider(#arg-2, 2, 1, "BottomTrinketHP", "Bottom Trinket @ HP", 0, 100, 80);
 
 	--Hardcode minitabs for Pots
-	LS.InitMiniTabs(#arg-1, "DPS")
-	
+	LS.InitMiniTabs(#arg-1, "DPS Potions")
+
 	--Hardcode trinket settings
 	LS.AddDropdown(#arg-1, 1, 0, "DPSPotionUsage", "DPS Potion With", "Bloodlust+Cooldowns", "Cooldowns", "Bloodlust", "Bloodlust+Cooldowns", "On Cooldown", "Don't Use");
 	LS.AddDropdown(#arg-1, 1, 1, "DPSPotionName", "DPS Potion Name", "Ultimate Power", "Fleeting Ultimate Power", "Ultimate Power", "Fleeting Power", "Power", "Shocking Disclosure");
-	--LS.AddDropdown(#arg-1, 1, 1, "DPSPotionRank", "DPS Potion Rank", "3", "1", "2", "3");
-
-	--Hardcode minitabs for Cycle
-	LS.InitMiniTabs(#arg, "Cycle", "Pulse")
-	
-	--Hardcode trinket settings
-	LS.AddSlider(#arg, 1, 1, "cycleDelay", "Cycle delay", 500, 2500, 500);
-	LS.AddCheckbox(#arg, 2, 1, "pulseSaveCPU", "Reduce CPU Load", false);
-	LS.AddSlider(#arg, 2, 1, "pulseSaveCPUOffset", "CPU Load Offset in milliseconds", 0, 600, 300);
-	--LS.AddDropdown(#arg, 1, 1, "DPSPotionRank", "DPS Potion Rank", "3", "1", "2", "3");
-	
 end
 
 function LS.InitMiniTabs(tab, ...)
@@ -676,7 +665,7 @@ function LS.InitProfilesTab()
 	LS.SettingsFrameTabProfiles.VersionText:SetText("");
 	LS.SettingsFrameTabProfiles.VersionText:SetFontObject(_G["legendaryFontNormal"])
 
-	LS.AddLabelForCommands(1, 0, "These are the Commands to manually control the toggles")	
+	LS.AddLabelForCommands(1, 0, "These are the Commands to manually control the toggles")
 	LS.AddLabelForCommands(2, 0, "These spells can be queued to cast on player")
 	LS.AddLabelForCommands(2, 1, "If you want to queue other spells, ask the responsible Dev")
 	LS.AddLabelForCommands(3, 0, "These spells can be queued to cast on target")
