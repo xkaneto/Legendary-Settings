@@ -314,8 +314,6 @@ function LS.InitTabs(...)
 	--Hardcode second to last tab as Pots
 	arg[#arg+1] = "Potions"
 
-	--Hardcode last tab as Cycle
-	arg[#arg+1] = "Cycle"
 
 	--Set the Tabs' Frame backdrop
 	local topWindowBackdrop ={
@@ -1140,7 +1138,7 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 		dropdown.optionControls[1]:SetText("None")
 		dropdown.optionControls[1]:SetSize(130, 15)
 		dropdown.optionControls[1]:SetPoint("TOPLEFT", dropdown, "BOTTOMLEFT", 0, 0)
-		
+
 		dropdown.optionControls[1]:SetScript("OnClick", function(self, button, down)
 			dropdown:SetText("None")
 			LS.Settings[variable] = "None"
@@ -1166,7 +1164,7 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 			dropdown.optionControls[i]:SetText(UnitName(PartyUnits[i-1]))
 			dropdown.optionControls[i]:SetSize(130, 15)
 			dropdown.optionControls[i]:SetPoint("TOPLEFT", dropdown, "BOTTOMLEFT", 0, -15*(i-1))
-			
+
 			dropdown.optionControls[i]:SetScript("OnClick", function(self, button, down)
 				dropdown:SetText(UnitName(PartyUnits[i-1]))
 				LS.Settings[variable] = UnitName(PartyUnits[i-1])
@@ -1291,7 +1289,7 @@ function LS.AddLabel(tab, minitab, line, label)
 	local frame=CreateFrame("Frame","TextboxLabel"..label,LS.Tabs[tab].MiniTabs[minitab].Body);
 	frame:SetPoint("LEFT", LS.Tabs[tab].MiniTabs[minitab].Body, "TOPLEFT", 10 + LS.Tabs[tab].MiniTabs[minitab].Lines[line].NextOffset,  -30 - LS.SpacingBetweenLines*line)
 	frame:SetSize(7*#label,LS.SettingControlHeight);
- 
+
 	local text=frame:CreateFontString(nil,"OVERLAY","GameFontNormal");
 	text:SetPoint("LEFT");
 	text:SetText(label);
@@ -1322,7 +1320,7 @@ function LS.AddTextbox(tab, minitab, line, variable, label, default)
 	local frame=CreateFrame("Frame","TextboxLabel"..variable,LS.Tabs[tab].MiniTabs[minitab].Body);
 	frame:SetPoint("BOTTOM", LS.Tabs[tab].MiniTabs[minitab].Body, "TOPLEFT", LS.TextboxSizeX/2 +15 + LS.Tabs[tab].MiniTabs[minitab].Lines[line].NextOffset,  -LS.TextboxSizeY -10 - LS.SpacingBetweenLines*line)
 	frame:SetSize(7*#label,LS.SettingControlHeight);
- 
+
 	local text=frame:CreateFontString(nil,"OVERLAY","GameFontNormal");
 	text:SetPoint("LEFT");
 	text:SetText(label);
@@ -1377,7 +1375,7 @@ function LS.AddCheckbox(tab, minitab, line, variable, label, default)
 	local frame=CreateFrame("Frame","CheckboxLabel"..variable,LS.Tabs[tab].MiniTabs[minitab].Body);
 	frame:SetPoint("BOTTOM", LS.Tabs[tab].MiniTabs[minitab].Body, "TOPLEFT", 80 + LS.Tabs[tab].MiniTabs[minitab].Lines[line].NextOffset, -LS.CheckboxSize -10 - LS.SpacingBetweenLines*line)
 	frame:SetSize(7*#label,LS.SettingControlHeight);
- 
+
 	local text=frame:CreateFontString(nil,"OVERLAY","GameFontNormal");
 	text:SetPoint("CENTER");
 	text:SetText(label);
@@ -1452,7 +1450,7 @@ function LS.AddSlider(tab, minitab, line, variable, label, min, max, default)
 	texture:SetPoint("BOTTOMRIGHT", MySlider ,"BOTTOMRIGHT", 0, -14)
 	texture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\slider")
 	MySlider.texture = texture
-	
+
 	--MySlider.tooltipText = 'This is the Tooltip hint'
 	_G[MySlider:GetName() .. 'Low']:SetText(min)        -- Sets the left-side slider text (default is "Low").
 	_G[MySlider:GetName() .. 'Low']:SetFontObject(_G["legendaryFontNormal"])
@@ -1464,7 +1462,7 @@ function LS.AddSlider(tab, minitab, line, variable, label, min, max, default)
 	local frameValue =CreateFrame("Frame","SliderLabel"..variable,LS.Tabs[tab].MiniTabs[minitab].Body);
 	frameValue:SetPoint("TOP", LS.Tabs[tab].MiniTabs[minitab].Body, "TOPLEFT", 10 + LS.SliderWidth/2 + LS.Tabs[tab].MiniTabs[minitab].Lines[line].NextOffset, -LS.SettingControlHeight - LS.SpacingBetweenLines*line)
 	frameValue:SetSize(30 ,LS.SettingControlHeight);
- 
+
 	local textValue=frameValue:CreateFontString(nil,"OVERLAY","GameFontNormal");
 	textValue:SetPoint("CENTER");
 	textValue:SetText(currentValue);
@@ -1495,7 +1493,7 @@ function LS.AddLabelForCommands(minitab, line, label)
 	local frame=CreateFrame("Frame","TextboxLabel"..label,LS.SettingsFrameTabCommands.MiniTabs[minitab].Body);
 	frame:SetPoint("LEFT", LS.SettingsFrameTabCommands.MiniTabs[minitab].Body, "TOPLEFT", 10 + LS.SettingsFrameTabCommands.MiniTabs[minitab].Lines[line].NextOffset,  -30 - 14*line)
 	frame:SetSize(7*#label,LS.SettingControlHeight);
- 
+
 	local text=frame:CreateFontString(nil,"OVERLAY","GameFontNormal");
 	text:SetPoint("LEFT");
 	text:SetText(label);
@@ -1520,7 +1518,7 @@ function LS.InitToggle(label, variable, default, explanation)
 	local numberOfRegisteredToggles = 0
 
 	LS.Toggles[string.lower(variable)] = default
-	
+
 	for k,v in pairs(LS.Toggles) do
 		numberOfRegisteredToggles = numberOfRegisteredToggles+1;
 	end
@@ -1572,7 +1570,6 @@ end
 
 function LS.InitButtonMain(label, addonName)
 	LS.Toggles["toggle"] = true
-	LS.Toggles["cycle"] = false
 
 	if not LS.MainButton.Initialized then
 		-- LS.MainButton.Initialized = true
@@ -1632,42 +1629,6 @@ function LS.InitButtonMain(label, addonName)
 			FrameToggles:StopMovingOrSizing()
 		end)
 
-		--Hardcoded Cycle toggle button
-		LS.Buttons["cycle"] = CreateFrame("Button", nil, FrameToggles, "UIPanelButtonTemplate")
-
-		LS.Buttons["cycle"]:SetPoint("TOPLEFT", FrameToggles, "TOPLEFT", 3, -28)
-		LS.Buttons["cycle"]:SetSize(83, 25)
-		LS.Buttons["cycle"]:SetText("Cycle");
-		LS.Buttons["cycle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
-		LS.Buttons["cycle"]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
-		LS.Buttons["cycle"]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
-		LS.Buttons["cycle"]:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
-		if LS.Toggles["cycle"] then
-			LS.Buttons["cycle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton") -- 2ndtry
-			LS.Buttons["cycle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
-		else
-			LS.Buttons["cycle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
-			LS.Buttons["cycle"]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
-		end
-		LS.Buttons["cycle"]:SetScript("OnClick", function(self, button, down)
-			if LS.Toggles["cycle"] then
-				LS.Toggles["cycle"] = false 
-				--self:SetText(label.." Off");
-				LS.Buttons["cycle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
-				LS.Buttons["cycle"]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
-			else
-				LS.Toggles["cycle"] = true
-				--self:SetText(label.." On");
-				LS.Buttons["cycle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")  -- 2ndtry
-				LS.Buttons["cycle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
-			end
-		end)
-		LS.Buttons["cycle"]:HookScript("OnMouseDown", function(self, button)
-			FrameToggles:StartMoving()
-		end)
-		LS.Buttons["cycle"]:HookScript("OnMouseUp", function(self, button)
-			FrameToggles:StopMovingOrSizing()
-		end)
 	end
 end
 
@@ -1745,5 +1706,5 @@ function CommandsButton_OnClick()
 end
 
 function HideButton_OnDragStart()
-	
+
 end
