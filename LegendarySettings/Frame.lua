@@ -90,7 +90,7 @@ LS.Settings = {}
 
 LS.DefaultSettings = {}
 
-local font = "Interface\\Addons\\LegendarySettings\\Fonts\\ActionMan.TTF";
+local font = "Interface\\Addons\\LegendarySettings\\Fonts\\texgyreschola-regular-webfont.TTF";
 
 local fontAlt = "Interface\\Addons\\LegendarySettings\\Fonts\\PTSansNarrow.TTF";
 
