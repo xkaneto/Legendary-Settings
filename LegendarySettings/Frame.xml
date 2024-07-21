@@ -99,7 +99,7 @@
 			</OnDragStop>
 		</Scripts>
 	</Frame>
-	<Button name="HideButton" inherits="UIPanelButtonTemplate" movable="true" clampedToScreen="true" text="ET">
+	<Button name="HideButton" inherits="UIPanelButtonTemplate" movable="true" clampedToScreen="true" text="LT">
 		<Size x="23" y="23" />
 		<Anchors>
 			<Anchor x="14" y="-3" point="TOPLEFT" />
@@ -119,7 +119,7 @@
 			</OnDragStop>
 		</Scripts>
 	</Button>
-	<Button name="SettingsButton" inherits="UIPanelButtonTemplate" movable="true" clampedToScreen="true" text="ES">
+	<Button name="SettingsButton" inherits="UIPanelButtonTemplate" movable="true" clampedToScreen="true" text="LS">
 		<Size x="23" y="23" />
 		<Anchors>
 			<Anchor x="14" y="-32" point="TOPLEFT" />

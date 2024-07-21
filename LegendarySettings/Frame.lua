@@ -150,7 +150,7 @@ frame:RegisterEvent("PLAYER_REGEN_ENABLED");
 local function HandleCommands(msg, editbox)
 	if LS.Toggles[string.lower(msg)] ~= nil then
 		  if LS.Toggles[string.lower(msg)] then
-			LS.Toggles[string.lower(msg)] = false 
+			LS.Toggles[string.lower(msg)] = false
 			print(string.lower(msg)..' Off')
 			LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
 			LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
@@ -269,7 +269,7 @@ function LS.Setup()
 
 	LS.InitMiniTabs(1, "Mini Tab 1", "Mini Tab 2")
 	LS.InitMiniTabs(2, "Hi", "I'm a tab", "And one long tab to check the length of the letters")
-	
+
 	LS.AddCheckbox(1, 1, 0, "C1", "Checkbox1", false)
 	LS.AddSlider(1, 1, 0, "F1", "Fun1 Slider", 5, 25, 11)
 	LS.AddSlider(1, 1, 0, "F21","Fun21 Slider", 6, 66, 6)
@@ -306,14 +306,13 @@ function LS.Setup()
 end
 
 function LS.InitTabs(...)
-	local arg = {...}	
+	local arg = {...}
 
-	--Hardcode third to last tab as Trinkets
+	--Hardcode second to last tab as Trinkets
 	arg[#arg+1] = "Trinkets"
 
-	--Hardcode second to last tab as Pots
+	--Hardcode last tab as Pots
 	arg[#arg+1] = "Potions"
-
 
 	--Set the Tabs' Frame backdrop
 	local topWindowBackdrop ={
@@ -338,8 +337,8 @@ function LS.InitTabs(...)
 
 	local texture = SettingsFrameIconHeader:CreateTexture()
 	texture:SetAllPoints()
-	texture:SetPoint("TOPLEFT", SettingsFrameIconHeader ,"TOPLEFT", 34, -1)
-	texture:SetPoint("BOTTOMRIGHT", SettingsFrameIconHeader ,"BOTTOMRIGHT", -34, 1)
+	texture:SetPoint("TOPLEFT", SettingsFrameIconHeader ,"TOPLEFT", 125, -0.95)
+	texture:SetPoint("BOTTOMRIGHT", SettingsFrameIconHeader ,"BOTTOMRIGHT", -125, 0.95)
 	texture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\legendary")
 	SettingsFrameIconHeader.texture = texture
 
@@ -396,25 +395,25 @@ function LS.InitTabs(...)
 	SettingsFrameTabProfiles:Hide();
 
 	--Hardcode minitabs for trinkets
-	LS.InitMiniTabs(#arg-2, "Top", "Bottom")
+	LS.InitMiniTabs(#arg-1, "Top", "Bottom")
 
 	--Hardcode trinket settings
-	LS.AddDropdown(#arg-2, 1, 0, "TopTrinketCondition", "Top Trinket Usage", "Don't Use", "At HP", "On Cooldown", "With Cooldowns", "Don't Use");
-	LS.AddDropdown(#arg-2, 1, 0, "TopTrinketTarget", "Top Trinket Target", "Enemy", "Enemy", "Player", "Cursor", "Friendly");
-	LS.AddDropdown(#arg-2, 1, 1, "TopTrinketCursor", "Top Trinket Cursor Settings", "Enemy Under Cursor", "Confirmation", "Cursor", "Enemy Under Cursor");
-	LS.AddSlider(#arg-2, 1, 1, "TopTrinketHP", "Top Trinket @ HP", 0, 100, 80);
+	LS.AddDropdown(#arg-1, 1, 0, "TopTrinketCondition", "Top Trinket Usage", "Don't Use", "At HP", "With Hekili", "Don't Use");
+	LS.AddDropdown(#arg-1, 1, 0, "TopTrinketTarget", "Top Trinket Target", "Enemy", "Enemy", "Player", "Cursor", "Friendly");
+	LS.AddDropdown(#arg-1, 1, 1, "TopTrinketCursor", "Top Trinket Cursor Settings", "Enemy Under Cursor", "Confirmation", "Cursor", "Enemy Under Cursor");
+	LS.AddSlider(#arg-1, 1, 1, "TopTrinketHP", "Top Trinket @ HP", 0, 100, 80);
 
-	LS.AddDropdown(#arg-2, 2, 0, "BottomTrinketCondition", "Bottom Trinket Usage", "Don't Use", "At HP", "On Cooldown", "With Cooldowns", "Don't Use");
-	LS.AddDropdown(#arg-2, 2, 0, "BottomTrinketTarget", "Bottom Trinket Target", "Enemy", "Enemy", "Player", "Cursor", "Friendly");
-	LS.AddDropdown(#arg-2, 2, 1, "BottomTrinketCursor", "Bottom Trinket Cursor Settings", "Enemy Under Cursor", "Confirmation", "Cursor", "Enemy Under Cursor");
-	LS.AddSlider(#arg-2, 2, 1, "BottomTrinketHP", "Bottom Trinket @ HP", 0, 100, 80);
+	LS.AddDropdown(#arg-1, 2, 0, "BottomTrinketCondition", "Bottom Trinket Usage", "Don't Use", "At HP", "With Hekili", "Don't Use");
+	LS.AddDropdown(#arg-1, 2, 0, "BottomTrinketTarget", "Bottom Trinket Target", "Enemy", "Enemy", "Player", "Cursor", "Friendly");
+	LS.AddDropdown(#arg-1, 2, 1, "BottomTrinketCursor", "Bottom Trinket Cursor Settings", "Enemy Under Cursor", "Confirmation", "Cursor", "Enemy Under Cursor");
+	LS.AddSlider(#arg-1, 2, 1, "BottomTrinketHP", "Bottom Trinket @ HP", 0, 100, 80);
 
 	--Hardcode minitabs for Pots
-	LS.InitMiniTabs(#arg-1, "DPS Potions")
+	LS.InitMiniTabs(#arg, "DPS Potions")
 
-	--Hardcode trinket settings
-	LS.AddDropdown(#arg-1, 1, 0, "DPSPotionUsage", "DPS Potion With", "Bloodlust+Cooldowns", "Cooldowns", "Bloodlust", "Bloodlust+Cooldowns", "On Cooldown", "Don't Use");
-	LS.AddDropdown(#arg-1, 1, 1, "DPSPotionName", "DPS Potion Name", "Ultimate Power", "Fleeting Ultimate Power", "Ultimate Power", "Fleeting Power", "Power", "Shocking Disclosure");
+	--Hardcode pot settings
+	LS.AddDropdown(#arg, 1, 0, "DPSPotionUsage", "DPS Potion With", "Bloodlust+Cooldowns", "Cooldowns", "Bloodlust", "Bloodlust+Cooldowns", "On Cooldown", "Don't Use");
+	LS.AddDropdown(#arg, 1, 1, "DPSPotionName", "DPS Potion Name", "Ultimate Power", "Fleeting Ultimate Power", "Ultimate Power", "Fleeting Power", "Power", "Shocking Disclosure");
 end
 
 function LS.InitMiniTabs(tab, ...)
@@ -508,7 +507,7 @@ function LS.InitProfilesTab()
 	LS.SettingsFrameTabCommands.MiniTabs = {}
 
 	local miniTabNextOffsetXCommands = 0
-	local commandTabNames = {"Toggles", "Player", "Target", "Cursor", "Mouseover", "Focus", "PvP", "Custom"}
+	local commandTabNames = {"Toggles", "Target", "Player", "Cursor", "Mouseover", "Focus", "PvP", "Custom"}
 	
 	for i=1,#commandTabNames do
 		LS.SettingsFrameTabCommands.MiniTabs[i] = {}
@@ -632,7 +631,7 @@ function LS.InitProfilesTab()
 	local ButtonLockETESPos = CreateFrame("Button", nil, LS.SettingsFrameTabProfiles.CategoriesBody, "UIPanelButtonTemplate")
 	ButtonLockETESPos:SetPoint("BOTTOMLEFT", LS.SettingsFrameTabProfiles.CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX + LS.MiniTabButtonSizeX*2+10 + LS.MiniTabOffsetX, LS.MiniTabOffsetY)
 	ButtonLockETESPos:SetSize(LS.MiniTabButtonSizeX, LS.MiniTabButtonSizeY)
-	ButtonLockETESPos:SetText("Lock ES/ET")
+	ButtonLockETESPos:SetText("Lock LS/LT")
 	ButtonLockETESPos:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
 	ButtonLockETESPos:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	ButtonLockETESPos:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
@@ -1542,7 +1541,7 @@ function LS.InitToggle(label, variable, default, explanation)
 		end
 		LS.Buttons[string.lower(variable)]:SetScript("OnClick", function(self, button, down)
 			if LS.Toggles[string.lower(variable)] then
-				LS.Toggles[string.lower(variable)] = false 
+				LS.Toggles[string.lower(variable)] = false
 				--self:SetText(label.." Off");
 				LS.Buttons[string.lower(variable)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
 				LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
@@ -1561,8 +1560,8 @@ function LS.InitToggle(label, variable, default, explanation)
 		end)
 	end
 
-	LS.AddLabelForCommands(1, 2+numberOfRegisteredToggles, explanation)
-	LS.AddLabelForCommands(1, 2+numberOfRegisteredToggles, "/legendary "..variable)
+	LS.AddLabelForCommands(1, 1+numberOfRegisteredToggles, explanation)
+	LS.AddLabelForCommands(1, 1+numberOfRegisteredToggles, "/legendary "..variable)
 
 	--Resize FrameToggles
 	FrameToggles:SetHeight((numberOfRegisteredToggles+1)*25);
@@ -1628,7 +1627,6 @@ function LS.InitButtonMain(label, addonName)
 		LS.Buttons["toggle"]:HookScript("OnMouseUp", function(self, button)
 			FrameToggles:StopMovingOrSizing()
 		end)
-
 	end
 end
 
