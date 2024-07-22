@@ -90,11 +90,11 @@ LS.Settings = {}
 
 LS.DefaultSettings = {}
 
-local font = "Interface\\Addons\\LegendarySettings\\Fonts\\texgyreschola-regular-webfont.TTF";
+local font = "Interface\\Addons\\LegendarySettings\\Fonts\\BB Condensed.TTF";
 
 local fontAlt = "Interface\\Addons\\LegendarySettings\\Fonts\\PTSansNarrow.TTF";
 
-local fontAltMulti = "Interface\\Addons\\LegendarySettings\\Fonts\\NanumGothic-Regular.TTF";
+local fontAltMulti = "Interface\\Addons\\LegendarySettings\\Fonts\\BB Condensed.TTF";
 
 local fontKor = "Interface\\Addons\\LegendarySettings\\Fonts\\BareunBatang 2Medium.ttf";
 
@@ -507,8 +507,8 @@ function LS.InitProfilesTab()
 	LS.SettingsFrameTabCommands.MiniTabs = {}
 
 	local miniTabNextOffsetXCommands = 0
-	local commandTabNames = {"Toggles", "Target", "Player", "Cursor", "Mouseover", "Focus", "PvP", "Custom"}
-	
+	local commandTabNames = {"Toggles", "Target", "Player", "Cursor", "Mouseover", "Focus"}
+
 	for i=1,#commandTabNames do
 		LS.SettingsFrameTabCommands.MiniTabs[i] = {}
 		LS.SettingsFrameTabCommands.MiniTabs[i].Lines = {}
