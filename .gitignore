@@ -1,6 +1,6 @@
 # Ignore everything
 .gitattributes
-vscode/
+.vscode/
 README.md
 
 # Except the LegendarySettings directory
