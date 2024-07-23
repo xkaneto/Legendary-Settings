@@ -398,12 +398,12 @@ function LS.InitTabs(...)
 	LS.InitMiniTabs(#arg-1, "Top", "Bottom")
 
 	--Hardcode trinket settings
-	LS.AddDropdown(#arg-1, 1, 0, "TopTrinketCondition", "Top Trinket Usage", "Don't Use", "At HP", "With Hekili", "Don't Use");
+	LS.AddDropdown(#arg-1, 1, 0, "TopTrinketCondition", "Top Trinket Usage", "With Hekili", "At HP", "With Hekili", "Don't Use");
 	LS.AddDropdown(#arg-1, 1, 0, "TopTrinketTarget", "Top Trinket Target", "Enemy", "Enemy", "Player", "Cursor", "Friendly");
 	LS.AddDropdown(#arg-1, 1, 1, "TopTrinketCursor", "Top Trinket Cursor Settings", "Enemy Under Cursor", "Confirmation", "Cursor", "Enemy Under Cursor");
 	LS.AddSlider(#arg-1, 1, 1, "TopTrinketHP", "Top Trinket @ HP", 0, 100, 80);
 
-	LS.AddDropdown(#arg-1, 2, 0, "BottomTrinketCondition", "Bottom Trinket Usage", "Don't Use", "At HP", "With Hekili", "Don't Use");
+	LS.AddDropdown(#arg-1, 2, 0, "BottomTrinketCondition", "Bottom Trinket Usage", "With Hekili", "At HP", "With Hekili", "Don't Use");
 	LS.AddDropdown(#arg-1, 2, 0, "BottomTrinketTarget", "Bottom Trinket Target", "Enemy", "Enemy", "Player", "Cursor", "Friendly");
 	LS.AddDropdown(#arg-1, 2, 1, "BottomTrinketCursor", "Bottom Trinket Cursor Settings", "Enemy Under Cursor", "Confirmation", "Cursor", "Enemy Under Cursor");
 	LS.AddSlider(#arg-1, 2, 1, "BottomTrinketHP", "Bottom Trinket @ HP", 0, 100, 80);
