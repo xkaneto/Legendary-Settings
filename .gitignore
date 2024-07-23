@@ -1,0 +1,7 @@
+# Ignore everything
+*.gitattributes
+*vscode*
+*README.md
+
+# Except the LegendarySettings directory
+!LegendarySettings/
