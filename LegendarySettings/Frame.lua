@@ -231,7 +231,7 @@ function frame:OnEvent(event, arg1)
 			end
 		end
 	elseif event == "ADDON_ACTION_FORBIDDEN" or event == "ADDON_ACTION_BLOCKED" then
-		print(debugstack())
+		--print(debugstack())
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		--print("Entered Combat")
 	elseif event == "PLAYER_REGEN_ENABLED" then
