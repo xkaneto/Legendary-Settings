@@ -1229,7 +1229,7 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 			dropdown.optionControls[1]:SetText("None")
 			dropdown.optionControls[1]:SetSize(130, 15)
 			dropdown.optionControls[1]:SetPoint("TOPLEFT", dropdown, "BOTTOMLEFT", 0, 0)
-			
+
 			dropdown.optionControls[1]:SetScript("OnClick", function(self, button, down)
 				dropdown:SetText("None")
 				LS.Settings[variable] = "None"
