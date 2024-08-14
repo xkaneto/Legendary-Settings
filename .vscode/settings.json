@@ -1,0 +1,19 @@
+{
+    "Lua.diagnostics.globals": [
+        "SlashCmdList",
+        "CreateFont",
+        "CreateFrame",
+        "SetCVar",
+        "UnitAffectingCombat",
+        "strsplit",
+        "GetSpecialization",
+        "GetSpecializationInfo",
+        "RegisterCVar",
+        "UnitExists",
+        "UnitName",
+        "GetCVar",
+        "GetLocale",
+        "C_Timer",
+        "UnitGroupRolesAssigned"
+    ]
+}
