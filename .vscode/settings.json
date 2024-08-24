@@ -1,8 +1,0 @@
-{
-    "Lua.diagnostics.globals": [
-        "SlashCmdList",
-        "SetCVar",
-        "RegisterCVar",
-        "GetCVar"
-    ]
-}
