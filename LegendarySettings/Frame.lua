@@ -1179,6 +1179,7 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 	dropdown:RegisterEvent("GROUP_ROSTER_UPDATE");
 	local function eventHandler(self, event, ...)
 		if event == "GROUP_ROSTER_UPDATE" then
+			dropdown:Hide() -- Add this line to hide the dropdown
 			local selectedUnitStillExits = false
 			--Get Current party
 			local PartyUnits = {}
@@ -1239,7 +1240,6 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 			end)
 
 			dropdown.optionControls[1]:Hide()
-
 			--Create new Option buttons
 			for i=2,#PartyUnits+1 do
 				dropdown.optionControls[i] = CreateFrame("Button", nil, dropdown, "UIPanelButtonTemplate")
@@ -1255,7 +1255,7 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 				dropdown.optionControls[i]:SetText(UnitName(PartyUnits[i-1]))
 				dropdown.optionControls[i]:SetSize(130, 15)
 				dropdown.optionControls[i]:SetPoint("TOPLEFT", dropdown, "BOTTOMLEFT", 0, -15*(i-1))
-				
+
 				dropdown.optionControls[i]:SetScript("OnClick", function(self, button, down)
 					dropdown:SetText(UnitName(PartyUnits[i-1]))
 					LS.Settings[variable] = UnitName(PartyUnits[i-1])
@@ -1266,7 +1266,6 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 
 				dropdown.optionControls[i]:Hide()
 			end
-			
 			--Set selected option to None if the unit left the party
 			if not selectedUnitStillExits then
 				dropdown:SetText("None")
