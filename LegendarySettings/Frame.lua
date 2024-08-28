@@ -418,7 +418,7 @@ function LS.InitTabs(...)
 
 	--Hardcode pot settings
 	LS.AddDropdown(#arg, 1, 0, "DPSPotionUsage", "DPS Potion With", "Bloodlust+Cooldowns", "Cooldowns", "Bloodlust", "Bloodlust+Cooldowns", "On Cooldown", "Don't Use");
-	LS.AddDropdown(#arg, 1, 1, "DPSPotionName", "DPS Potion Name", "Ultimate Power", "Fleeting Ultimate Power", "Ultimate Power", "Fleeting Power", "Power", "Shocking Disclosure");
+	LS.AddDropdown(#arg, 1, 1, "DPSPotionName", "DPS Potion Name", "Tempered Potion", "Tempered Potion", "Potion of Unwavering Focus", "Frontline Potion", "Fleeting Tempered Potion", "Fleeting Potion of Unwavering Focus", "Fleeting Frontline Potion");
 end
 
 function LS.InitMiniTabs(tab, ...)
