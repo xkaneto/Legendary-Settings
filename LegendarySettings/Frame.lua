@@ -481,35 +481,74 @@ end
 --end
 
 function LS.InitMiniMapButton()
-    local MinimapButton = CreateFrame("Button", "MinimapButton", Minimap)
-    MinimapButton:SetSize(24, 24)  -- Size of the button
+    -- Create the minimap button
+    local MinimapButton = CreateFrame("Button", "LS_MinimapButton", Minimap)
+    MinimapButton:SetSize(32, 32)  -- Size for the minimap button
     MinimapButton:SetFrameStrata("MEDIUM")
-    MinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", -5, 5)  -- Initial position in the center; adjust as needed
 
-    MinimapButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\LR")
+    -- Create the icon texture and apply a circular mask
+    local IconTexture = MinimapButton:CreateTexture(nil, "BACKGROUND")
+    IconTexture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\LR")
+    IconTexture:SetSize(28, 28)  -- Size of the icon to fit within the gold circle
+    IconTexture:SetPoint("CENTER", MinimapButton, "CENTER", 0, 0)
+
+    -- Apply a circular mask to the icon texture to prevent it from exceeding the border
+    local MaskTexture = MinimapButton:CreateMaskTexture()
+    MaskTexture:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    MaskTexture:SetSize(28, 28)
+    MaskTexture:SetPoint("CENTER", MinimapButton, "CENTER", 0, 0)
+    IconTexture:AddMaskTexture(MaskTexture)
+
+    -- Create the gold border texture (outline circle)
+    local BorderTexture = MinimapButton:CreateTexture(nil, "OVERLAY")
+    BorderTexture:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+    BorderTexture:SetSize(54, 54)  -- Size of the gold circle border
+    BorderTexture:SetPoint("CENTER", MinimapButton, "CENTER", 10, -10)  -- Move the border down slightly
+
+    -- Function to update the button's position around the minimap
+    local function UpdatePosition()
+        local angle = LegendarySettingsDB.angle or 0
+        local radius = 110  -- Adjust based on the size of the minimap
+        local xOffset = cos(angle) * radius
+        local yOffset = sin(angle) * radius
+        MinimapButton:SetPoint("CENTER", Minimap, "CENTER", xOffset, yOffset)
+    end
+
+    -- Update position initially and when the button is dragged
+    UpdatePosition()
+
     MinimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-
-    -- Making the button draggable
     MinimapButton:RegisterForDrag("LeftButton")
     MinimapButton:SetMovable(true)
-    MinimapButton:SetScript("OnDragStart", MinimapButton.StartMoving)
-    MinimapButton:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        -- Save the new position
-        local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
-        LegendarySettingsDB.position = { x = xOfs, y = yOfs }
+    MinimapButton:SetScript("OnDragStart", function(self)
+        self:LockHighlight()
+        self:SetScript("OnUpdate", function(self)
+            local mx, my = Minimap:GetCenter()
+            local px, py = GetCursorPosition()
+            local scale = Minimap:GetEffectiveScale()
+            px, py = px / scale, py / scale
+            local angle = atan2(py - my, px - mx)
+            LegendarySettingsDB.angle = angle
+            UpdatePosition()
+        end)
     end)
 
-	-- OnClick functionality
-	MinimapButton:SetScript("OnClick", function(self, button)
-		if button == "LeftButton" then
-			-- Call the SettingsButton functionality
-			SettingsButton_OnClick()
-		elseif button == "RightButton" then
-			-- Call the HideButton functionality
-			HideButton_OnClick()
-		end
-	end)
+    MinimapButton:SetScript("OnDragStop", function(self)
+        self:UnlockHighlight()
+        self:SetScript("OnUpdate", nil)
+        UpdatePosition()
+    end)
+
+    -- OnClick functionality
+    MinimapButton:SetScript("OnClick", function(self, button)
+        if button == "LeftButton" then
+            -- Call the SettingsButton functionality
+            SettingsButton_OnClick()
+        elseif button == "RightButton" then
+            -- Call the HideButton functionality
+            HideButton_OnClick()
+        end
+    end)
 
     -- Tooltip functionality
     MinimapButton:SetScript("OnEnter", function(self)
