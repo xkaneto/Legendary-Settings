@@ -197,6 +197,10 @@ function frame:OnEvent(event, arg1)
 	if LegendarySettingsDB == nil then
 		LegendarySettingsDB = {}
 	end
+	-- Initialize position data if it does not exist
+	if not LegendarySettingsDB.position then
+		LegendarySettingsDB.position = { x = -5, y = 5 }
+	end
  elseif event == "PLAYER_LOGIN" then
 	local SpecIndex = GetSpecialization()
 	local Spec, _  = GetSpecializationInfo(SpecIndex)
@@ -477,19 +481,26 @@ end
 --end
 
 function LS.InitMiniMapButton()
-	-- Create the Minimap Button
-	local MinimapButton = CreateFrame("Button", "MinimapButton", Minimap)
-	MinimapButton:SetSize(24, 24)  -- Size of the button
-	MinimapButton:SetFrameStrata("MEDIUM")
-	MinimapButton:SetPoint("CENTER", Minimap, "CENTER", 0, 0)  -- Position on the minimap
+    local MinimapButton = CreateFrame("Button", "MinimapButton", Minimap)
+    MinimapButton:SetSize(24, 24)  -- Size of the button
+    MinimapButton:SetFrameStrata("MEDIUM")
+    MinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", -5, 5)  -- Initial position in the center; adjust as needed
 
-	-- Set textures for the button (replace with your own)
-	MinimapButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\LR")
-	MinimapButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
+    MinimapButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\LR")
+    MinimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
-	-- Handling Left-Click and Right-Click events
-	MinimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    -- Making the button draggable
+    MinimapButton:RegisterForDrag("LeftButton")
+    MinimapButton:SetMovable(true)
+    MinimapButton:SetScript("OnDragStart", MinimapButton.StartMoving)
+    MinimapButton:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        -- Save the new position
+        local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
+        LegendarySettingsDB.position = { x = xOfs, y = yOfs }
+    end)
 
+	-- OnClick functionality
 	MinimapButton:SetScript("OnClick", function(self, button)
 		if button == "LeftButton" then
 			-- Call the SettingsButton functionality
@@ -500,17 +511,21 @@ function LS.InitMiniMapButton()
 		end
 	end)
 
-	-- Optional: Add tooltip for the minimap button
-	MinimapButton:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		GameTooltip:SetText("Left-Click: Settings\nRight-Click: Hide Toggles\n\nHold Shift to Drag the Toggles!", 1, 1, 1)
-		GameTooltip:Show()
-	end)
-
-	MinimapButton:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
+    -- Tooltip functionality
+    MinimapButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:AddLine("Legendary Rotations")
+        GameTooltip:AddLine("|cFFFFFFFFLeft-click to open Settings.|r")
+        GameTooltip:AddLine("|cFFFFFFFFRight-click to hide/show toggles.|r")
+        GameTooltip:AddLine("\n")
+        GameTooltip:AddLine("|cFFFFFFFFHold SHIFT to move Toggle Frame.|r")
+        GameTooltip:Show()
+    end)
+    MinimapButton:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
+    end)
 end
+
 
 function LS.InitProfilesTab()
 	local backdropInfo = {
@@ -1710,19 +1725,10 @@ function HandleCutsceneEvent(self, event)
         if FrameToggles:IsVisible() then
             FrameToggles:Hide()
         end
-    elseif event == "CINEMATIC_STOP" then
-        -- Optionally show the frames again when the cinematic stops
-        if not SettingsFrame:IsVisible() then
-            SettingsFrame:Show()
-        end
-        if not FrameToggles:IsVisible() then
-            FrameToggles:Show()
-        end
     end
 end
 -- Register for cinematic events
 eventFrame:RegisterEvent("CINEMATIC_START")
-eventFrame:RegisterEvent("CINEMATIC_STOP")
 
 -- Set the script to handle the events
 eventFrame:SetScript("OnEvent", HandleCutsceneEvent)
