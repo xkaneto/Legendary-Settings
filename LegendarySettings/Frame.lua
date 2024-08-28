@@ -172,16 +172,16 @@ local function HandleCommands(msg, editbox)
 		elseif a == "resetqueues" then
 			LS.Queues = {}
 		elseif a == "hide" then
-			if SettingsButton:IsVisible() then
-				SettingsButton:Hide()
-			else
-				SettingsButton:Show()
-			end
-			if HideButton:IsVisible() then
-				HideButton:Hide()
-			else
-				HideButton:Show()
-			end
+			--if SettingsButton:IsVisible() then
+			--	SettingsButton:Hide()
+			--else
+			--	SettingsButton:Show()
+			--end
+			--if HideButton:IsVisible() then
+			--	HideButton:Hide()
+			--else
+			--	HideButton:Show()
+			--end
 		elseif a == "debug" then
 			LS.DebugOn = not LS.DebugOn
 		end
@@ -216,7 +216,8 @@ function frame:OnEvent(event, arg1)
 		end
 	end
 
-	LS.InitMiniButtons()
+	LS.InitMiniMapButton()
+	--LS.InitMiniButtons()
 	LS.InitProfilesTab()
 	LS.UpdateExistingControls()
 
@@ -463,16 +464,52 @@ function LS.InitMiniTabs(tab, ...)
 
 end
 
-function LS.InitMiniButtons()
-	SettingsButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
-	SettingsButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
-	SettingsButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
-	SettingsButton:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
+--function LS.InitMiniButtons()
+	--SettingsButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
+	--SettingsButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
+	--SettingsButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+	--SettingsButton:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 
-	HideButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
-	HideButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
-	HideButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
-	HideButton:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
+	--HideButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
+	--HideButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
+	--HideButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+	--HideButton:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
+--end
+
+function LS.InitMiniMapButton()
+	-- Create the Minimap Button
+	local MinimapButton = CreateFrame("Button", "MinimapButton", Minimap)
+	MinimapButton:SetSize(24, 24)  -- Size of the button
+	MinimapButton:SetFrameStrata("MEDIUM")
+	MinimapButton:SetPoint("CENTER", Minimap, "CENTER", 0, 0)  -- Position on the minimap
+
+	-- Set textures for the button (replace with your own)
+	MinimapButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\LR")
+	MinimapButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
+
+	-- Handling Left-Click and Right-Click events
+	MinimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+
+	MinimapButton:SetScript("OnClick", function(self, button)
+		if button == "LeftButton" then
+			-- Call the SettingsButton functionality
+			SettingsButton_OnClick()
+		elseif button == "RightButton" then
+			-- Call the HideButton functionality
+			HideButton_OnClick()
+		end
+	end)
+
+	-- Optional: Add tooltip for the minimap button
+	MinimapButton:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText("Left-Click: Settings\nRight-Click: Hide Toggles\n\nHold Shift to Drag the Toggles!", 1, 1, 1)
+		GameTooltip:Show()
+	end)
+
+	MinimapButton:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 end
 
 function LS.InitProfilesTab()
@@ -628,30 +665,30 @@ function LS.InitProfilesTab()
 		LS.UpdateExistingControls();
 	end)
 
-	local ButtonLockETESPos = CreateFrame("Button", nil, LS.SettingsFrameTabProfiles.CategoriesBody, "UIPanelButtonTemplate")
-	ButtonLockETESPos:SetPoint("BOTTOMLEFT", LS.SettingsFrameTabProfiles.CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX + LS.MiniTabButtonSizeX*2+10 + LS.MiniTabOffsetX, LS.MiniTabOffsetY)
-	ButtonLockETESPos:SetSize(LS.MiniTabButtonSizeX, LS.MiniTabButtonSizeY)
-	ButtonLockETESPos:SetText("Lock LS/LT")
-	ButtonLockETESPos:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
-	ButtonLockETESPos:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
-	ButtonLockETESPos:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
-	ButtonLockETESPos:SetHighlightFontObject(_G["legendaryFontButtonSelectedS"])
-	ButtonLockETESPos:SetScript("OnClick", function(self, button, down)
-		if SettingsButton:IsMovable() then
-			self:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")
-			self:SetNormalFontObject(_G["legendaryFontButtonSelectedS"])
-			SettingsButton:SetMovable(false);
-		else
-			ButtonLockETESPos:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
-			self:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
-			SettingsButton:SetMovable(true);
-		end
-		if HideButton:IsMovable() then
-			HideButton:SetMovable(false);
-		else
-			HideButton:SetMovable(true);
-		end
-	end)
+	--local ButtonLockETESPos = CreateFrame("Button", nil, LS.SettingsFrameTabProfiles.CategoriesBody, "UIPanelButtonTemplate")
+	--ButtonLockETESPos:SetPoint("BOTTOMLEFT", LS.SettingsFrameTabProfiles.CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX + LS.MiniTabButtonSizeX*2+10 + LS.MiniTabOffsetX, LS.MiniTabOffsetY)
+	--ButtonLockETESPos:SetSize(LS.MiniTabButtonSizeX, LS.MiniTabButtonSizeY)
+	--ButtonLockETESPos:SetText("Lock LS/LT")
+	--ButtonLockETESPos:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
+	--ButtonLockETESPos:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
+	--ButtonLockETESPos:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
+	--ButtonLockETESPos:SetHighlightFontObject(_G["legendaryFontButtonSelectedS"])
+	--ButtonLockETESPos:SetScript("OnClick", function(self, button, down)
+	--	if SettingsButton:IsMovable() then
+	--		self:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")
+	--		self:SetNormalFontObject(_G["legendaryFontButtonSelectedS"])
+	--		SettingsButton:SetMovable(false);
+	--	else
+	--		ButtonLockETESPos:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
+	--		self:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
+	--		SettingsButton:SetMovable(true);
+	--	end
+	--	if HideButton:IsMovable() then
+	--		HideButton:SetMovable(false);
+	--	else
+	--		HideButton:SetMovable(true);
+	--	end
+	--end)
 	
 	--Version label
 	LS.SettingsFrameTabProfiles.VersionLabel = CreateFrame("Frame", nil, LS.SettingsFrameTabProfiles.CategoriesBody)
@@ -1179,7 +1216,7 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 	dropdown:RegisterEvent("GROUP_ROSTER_UPDATE");
 	local function eventHandler(self, event, ...)
 		if event == "GROUP_ROSTER_UPDATE" then
-			dropdown.optionControls[1]:Hide() -- Hide the buttons that are included already as soon as Group Roster changes
+			dropdown.optionControls:Hide() -- Hide the buttons that are included already as soon as Group Roster changes
 			local selectedUnitStillExits = false
 			--Get Current party
 			local PartyUnits = {}
@@ -1552,10 +1589,14 @@ function LS.InitToggle(label, variable, default, explanation)
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseDown", function(self, button)
-			FrameToggles:StartMoving()
+			if IsShiftKeyDown() then
+				FrameToggles:StartMoving()
+			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseUp", function(self, button)
-			FrameToggles:StopMovingOrSizing()
+			if IsShiftKeyDown() then
+				FrameToggles:StopMovingOrSizing()
+			end
 		end)
 	end
 
@@ -1621,10 +1662,14 @@ function LS.InitButtonMain(label, addonName)
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseDown", function(self, button)
-			FrameToggles:StartMoving()
+			if IsShiftKeyDown() then
+				FrameToggles:StartMoving()
+			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseUp", function(self, button)
-			FrameToggles:StopMovingOrSizing()
+			if IsShiftKeyDown() then
+				FrameToggles:StopMovingOrSizing()
+			end
 		end)
 	end
 end
@@ -1652,6 +1697,35 @@ function HideButton_OnClick()
 		end
 	end
 end
+
+local eventFrame = CreateFrame("Frame")
+
+-- Function to handle the events
+function HandleCutsceneEvent(self, event)
+    if event == "CINEMATIC_START" then
+        -- Hide the frames when the cinematic starts
+        if SettingsFrame:IsVisible() then
+            SettingsFrame:Hide()
+        end
+        if FrameToggles:IsVisible() then
+            FrameToggles:Hide()
+        end
+    elseif event == "CINEMATIC_STOP" then
+        -- Optionally show the frames again when the cinematic stops
+        if not SettingsFrame:IsVisible() then
+            SettingsFrame:Show()
+        end
+        if not FrameToggles:IsVisible() then
+            FrameToggles:Show()
+        end
+    end
+end
+-- Register for cinematic events
+eventFrame:RegisterEvent("CINEMATIC_START")
+eventFrame:RegisterEvent("CINEMATIC_STOP")
+
+-- Set the script to handle the events
+eventFrame:SetScript("OnEvent", HandleCutsceneEvent)
 
 function ToggleButtonTop_OnClick(self, args)
 	if LS.MainButton.Toggled then

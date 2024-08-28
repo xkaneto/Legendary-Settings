@@ -99,6 +99,7 @@
 			</OnDragStop>
 		</Scripts>
 	</Frame>
+	<!--
 	<Button name="HideButton" inherits="UIPanelButtonTemplate" movable="true" clampedToScreen="true" text="LT">
 		<Size x="23" y="23" />
 		<Anchors>
@@ -139,6 +140,7 @@
 			</OnDragStop>
 		</Scripts>
 	</Button>
+	-->
 	<Frame name="SettingsFrame" inherits="BackdropTemplate" hidden="true">
 		<Size x="916" y="496" />
 		<Anchors>
