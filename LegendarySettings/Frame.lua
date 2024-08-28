@@ -1179,7 +1179,7 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 	dropdown:RegisterEvent("GROUP_ROSTER_UPDATE");
 	local function eventHandler(self, event, ...)
 		if event == "GROUP_ROSTER_UPDATE" then
-			dropdown:Hide() -- Add this line to hide the dropdown
+			dropdown.optionControls[1]:Hide() -- Hide the buttons that are included already as soon as Group Roster changes
 			local selectedUnitStillExits = false
 			--Get Current party
 			local PartyUnits = {}
