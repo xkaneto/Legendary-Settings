@@ -1270,8 +1270,14 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 	dropdown:RegisterEvent("GROUP_ROSTER_UPDATE");
 	local function eventHandler(self, event, ...)
 		if event == "GROUP_ROSTER_UPDATE" then
-			dropdown.optionControls:Hide() -- Hide the buttons that are included already as soon as Group Roster changes
 			local selectedUnitStillExits = false
+			--Delete old Option buttons
+			for i=1,#dropdown.optionControls do
+				dropdown.optionControls[i] = nil
+				table.remove(dropdown.optionControls, i)
+				dropdown.options[i] = nil
+				table.remove(dropdown.options, i)
+			end
 			--Get Current party
 			local PartyUnits = {}
 			if includePlayer then
@@ -1302,14 +1308,6 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 						table.insert(PartyUnits, RaidUnitKey);
 					end
 				end
-			end
-
-			--Delete old Option buttons
-			for i=1,#dropdown.optionControls do
-				dropdown.optionControls[i] = nil
-				table.remove(dropdown.optionControls, i)
-				dropdown.options[i] = nil
-				table.remove(dropdown.options, i)
 			end
 
 			--Create a Default "None" button
