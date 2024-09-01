@@ -481,8 +481,12 @@ end
 --end
 
 function LS.InitMiniMapButton()
+    -- Determine the minimap frame, whether it's ElvUI's or the default Minimap
+    local minimapFrame = _G["ElvUI_MinimapHolder"] or Minimap
+    local isSquareMinimap = _G["ElvUI"] and ElvUI[1].private.general.minimap.shape == "square"
+
     -- Create the minimap button
-    local MinimapButton = CreateFrame("Button", "LS_MinimapButton", Minimap)
+    local MinimapButton = CreateFrame("Button", "LS_MinimapButton", minimapFrame)
     MinimapButton:SetSize(32, 32)  -- Size for the minimap button
     MinimapButton:SetFrameStrata("MEDIUM")
 
@@ -492,12 +496,14 @@ function LS.InitMiniMapButton()
     IconTexture:SetSize(28, 28)  -- Size of the icon to fit within the gold circle
     IconTexture:SetPoint("CENTER", MinimapButton, "CENTER", 0, 0)
 
-    -- Apply a circular mask to the icon texture to prevent it from exceeding the border
-    local MaskTexture = MinimapButton:CreateMaskTexture()
-    MaskTexture:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    MaskTexture:SetSize(28, 28)
-    MaskTexture:SetPoint("CENTER", MinimapButton, "CENTER", 0, 0)
-    IconTexture:AddMaskTexture(MaskTexture)
+    -- Apply a circular mask to the icon texture to prevent it from exceeding the border (for round minimap)
+    if not isSquareMinimap then
+        local MaskTexture = MinimapButton:CreateMaskTexture()
+        MaskTexture:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        MaskTexture:SetSize(28, 28)
+        MaskTexture:SetPoint("CENTER", MinimapButton, "CENTER", 0, 0)
+        IconTexture:AddMaskTexture(MaskTexture)
+    end
 
     -- Create the gold border texture (outline circle)
     local BorderTexture = MinimapButton:CreateTexture(nil, "OVERLAY")
@@ -511,7 +517,14 @@ function LS.InitMiniMapButton()
         local radius = 110  -- Adjust based on the size of the minimap
         local xOffset = cos(angle) * radius
         local yOffset = sin(angle) * radius
-        MinimapButton:SetPoint("CENTER", Minimap, "CENTER", xOffset, yOffset)
+
+        -- Adjust for square minimap
+        if isSquareMinimap then
+            xOffset = max(-radius, min(xOffset, radius))
+            yOffset = max(-radius, min(yOffset, radius))
+        end
+
+        MinimapButton:SetPoint("CENTER", minimapFrame, "CENTER", xOffset, yOffset)
     end
 
     -- Update position initially and when the button is dragged
@@ -523,9 +536,9 @@ function LS.InitMiniMapButton()
     MinimapButton:SetScript("OnDragStart", function(self)
         self:LockHighlight()
         self:SetScript("OnUpdate", function(self)
-            local mx, my = Minimap:GetCenter()
+            local mx, my = minimapFrame:GetCenter()
             local px, py = GetCursorPosition()
-            local scale = Minimap:GetEffectiveScale()
+            local scale = minimapFrame:GetEffectiveScale()
             px, py = px / scale, py / scale
             local angle = atan2(py - my, px - mx)
             LegendarySettingsDB.angle = angle
@@ -564,6 +577,7 @@ function LS.InitMiniMapButton()
         GameTooltip:Hide()
     end)
 end
+
 
 
 function LS.InitProfilesTab()
