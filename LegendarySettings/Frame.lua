@@ -566,6 +566,7 @@ function LS.InitMiniMapButton()
 end
 
 
+
 function LS.InitProfilesTab()
 	local backdropInfo = {
 		--bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
