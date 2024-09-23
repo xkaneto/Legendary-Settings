@@ -1642,12 +1642,12 @@ function LS.InitToggle(label, variable, default, explanation)
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseDown", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown then
+			if IsShiftKeyDown() and IsLeftAltKeyDown() then
 				FrameToggles:StartMoving()
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseUp", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown then
+			if IsShiftKeyDown() and IsLeftAltKeyDown() then
 				FrameToggles:StopMovingOrSizing()
 			end
 		end)
@@ -1715,12 +1715,12 @@ function LS.InitButtonMain(label, addonName)
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseDown", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown then
+			if IsShiftKeyDown() and IsLeftAltKeyDown() then
 				FrameToggles:StartMoving()
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseUp", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown then
+			if IsShiftKeyDown() and IsLeftAltKeyDown() then
 				FrameToggles:StopMovingOrSizing()
 			end
 		end)
