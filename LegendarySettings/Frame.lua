@@ -557,7 +557,7 @@ function LS.InitMiniMapButton()
         GameTooltip:AddLine("|cFFFFFFFFLeft-click to open Settings.|r")
         GameTooltip:AddLine("|cFFFFFFFFRight-click to hide/show toggles.|r")
         GameTooltip:AddLine("\n")
-        GameTooltip:AddLine("|cFFFFFFFFHold SHIFT to move Toggle Frame.|r")
+        GameTooltip:AddLine("|cFFFFFFFFHold SHIFT and ALT (Left) to move Toggle Frame.|r")
         GameTooltip:Show()
     end)
     MinimapButton:SetScript("OnLeave", function(self)
@@ -1642,12 +1642,12 @@ function LS.InitToggle(label, variable, default, explanation)
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseDown", function(self, button)
-			if IsShiftKeyDown() then
+			if IsShiftKeyDown() and IsLeftAltKeyDown then
 				FrameToggles:StartMoving()
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseUp", function(self, button)
-			if IsShiftKeyDown() then
+			if IsShiftKeyDown() and IsLeftAltKeyDown then
 				FrameToggles:StopMovingOrSizing()
 			end
 		end)
@@ -1715,12 +1715,12 @@ function LS.InitButtonMain(label, addonName)
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseDown", function(self, button)
-			if IsShiftKeyDown() then
+			if IsShiftKeyDown() and IsLeftAltKeyDown then
 				FrameToggles:StartMoving()
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseUp", function(self, button)
-			if IsShiftKeyDown() then
+			if IsShiftKeyDown() and IsLeftAltKeyDown then
 				FrameToggles:StopMovingOrSizing()
 			end
 		end)
