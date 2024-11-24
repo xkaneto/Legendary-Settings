@@ -148,44 +148,46 @@ frame:RegisterEvent("PLAYER_REGEN_DISABLED");
 frame:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 local function HandleCommands(msg, editbox)
-	if LS.Toggles[string.lower(msg)] ~= nil then
-		  if LS.Toggles[string.lower(msg)] then
-			LS.Toggles[string.lower(msg)] = false
-			print(string.lower(msg)..' Off')
-			LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
-			LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
-		else
-			LS.Toggles[string.lower(msg)] = true
-			print(string.lower(msg)..' On')
-			LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")
-			LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
-		end
-	else
-		local a, b, c = strsplit(" ", string.lower(msg), 3)
-		if a == "cast" then
-			LS.Queues[b..c] = true
-			if b == "custom" then
-				C_Timer.After(3.5, function() LS.Queues[b..c] = false end)
-			else
-				C_Timer.After(2.5, function() LS.Queues[b..c] = false end) -- /run print(LegendarySettings.Queues["targetdisarm"])
-			end
-		elseif a == "resetqueues" then
-			LS.Queues = {}
-		elseif a == "hide" then
-			--if SettingsButton:IsVisible() then
-			--	SettingsButton:Hide()
-			--else
-			--	SettingsButton:Show()
-			--end
-			--if HideButton:IsVisible() then
-			--	HideButton:Hide()
-			--else
-			--	HideButton:Show()
-			--end
-		elseif a == "debug" then
-			LS.DebugOn = not LS.DebugOn
-		end
-	end
+    if LS.Toggles[string.lower(msg)] ~= nil then
+        if LS.Toggles[string.lower(msg)] then
+            LS.Toggles[string.lower(msg)] = false
+            print(string.lower(msg)..' Off')
+            LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
+            LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+            RaidNotice_AddMessage(RaidWarningFrame, string.lower(msg)..' Off', ChatTypeInfo["RAID_WARNING"])
+        else
+            LS.Toggles[string.lower(msg)] = true
+            print(string.lower(msg)..' On')
+            LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")
+            LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
+            RaidNotice_AddMessage(RaidWarningFrame, string.lower(msg)..' On', ChatTypeInfo["RAID_WARNING"])
+        end
+    else
+        local a, b, c = strsplit(" ", string.lower(msg), 3)
+        if a == "cast" then
+            LS.Queues[b..c] = true
+            if b == "custom" then
+                C_Timer.After(3.5, function() LS.Queues[b..c] = false end)
+            else
+                C_Timer.After(2.5, function() LS.Queues[b..c] = false end) -- /run print(LegendarySettings.Queues["targetdisarm"])
+            end
+        elseif a == "resetqueues" then
+            LS.Queues = {}
+        elseif a == "hide" then
+            --if SettingsButton:IsVisible() then
+            --    SettingsButton:Hide()
+            --else
+            --    SettingsButton:Show()
+            --end
+            --if HideButton:IsVisible() then
+            --    HideButton:Hide()
+            --else
+            --    HideButton:Show()
+            --end
+        elseif a == "debug" then
+            LS.DebugOn = not LS.DebugOn
+        end
+    end
 end
 
 SLASH_LEGENDARYSTTNGS1, SLASH_LEGENDARYSTTNGS2, SLASH_LEGENDARYSTTNGS3 = '/legendary', '/LEGENDARY', '/Legendary'
@@ -193,55 +195,55 @@ SLASH_LEGENDARYSTTNGS1, SLASH_LEGENDARYSTTNGS2, SLASH_LEGENDARYSTTNGS3 = '/legen
 SlashCmdList["LEGENDARYSTTNGS"] = HandleCommands   -- add /hiw and /hellow to command list
 
 function frame:OnEvent(event, arg1)
- if event == "ADDON_LOADED" and arg1 == "LegendarySettings" then
-	if LegendarySettingsDB == nil then
-		LegendarySettingsDB = {}
-	end
-	-- Initialize position data if it does not exist
-	if not LegendarySettingsDB.position then
-		LegendarySettingsDB.position = { x = -5, y = 5 }
-	end
- elseif event == "PLAYER_LOGIN" then
-	local SpecIndex = GetSpecialization()
-	local Spec, _  = GetSpecializationInfo(SpecIndex)
-	LS.SpecID = Spec
+    if event == "ADDON_LOADED" and arg1 == "LegendarySettings" then
+        if LegendarySettingsDB == nil then
+            LegendarySettingsDB = {}
+        end
+        -- Initialize position data if it does not exist
+        if not LegendarySettingsDB.position then
+            LegendarySettingsDB.position = { x = -5, y = 5 }
+        end
+    elseif event == "PLAYER_LOGIN" then
+        local SpecIndex = GetSpecialization()
+        local Spec, _  = GetSpecializationInfo(SpecIndex)
+        LS.SpecID = Spec
 
-	if LegendarySettingsDB[LS.SpecID] == nil then
-		LegendarySettingsDB[LS.SpecID] = {}
-		LegendarySettingsDB[LS.SpecID].Profiles = {}
-		LegendarySettingsDB[LS.SpecID].Profiles["Default"] = {}
-		LegendarySettingsDB[LS.SpecID].Profiles["Default"].ID = 1
-		LegendarySettingsDB[LS.SpecID].SelectedProfile = "Default"
-	else
-		if LegendarySettingsDB[LS.SpecID].Profiles[LegendarySettingsDB[LS.SpecID].SelectedProfile] == nil then
-			LegendarySettingsDB[LS.SpecID].Profiles["Default"] = {}
-			LegendarySettingsDB[LS.SpecID].Profiles["Default"].ID = 1
-			LegendarySettingsDB[LS.SpecID].SelectedProfile = "Default"
-		end
-	end
+        if LegendarySettingsDB[LS.SpecID] == nil then
+            LegendarySettingsDB[LS.SpecID] = {}
+            LegendarySettingsDB[LS.SpecID].Profiles = {}
+            LegendarySettingsDB[LS.SpecID].Profiles["Default"] = {}
+            LegendarySettingsDB[LS.SpecID].Profiles["Default"].ID = 1
+            LegendarySettingsDB[LS.SpecID].SelectedProfile = "Default"
+        else
+            if LegendarySettingsDB[LS.SpecID].Profiles[LegendarySettingsDB[LS.SpecID].SelectedProfile] == nil then
+                LegendarySettingsDB[LS.SpecID].Profiles["Default"] = {}
+                LegendarySettingsDB[LS.SpecID].Profiles["Default"].ID = 1
+                LegendarySettingsDB[LS.SpecID].SelectedProfile = "Default"
+            end
+        end
 
-	LS.InitMiniMapButton()
-	--LS.InitMiniButtons()
-	LS.InitProfilesTab()
-	LS.UpdateExistingControls()
+        LS.InitMiniMapButton()
+        -- LS.InitMiniButtons()
+        LS.InitProfilesTab()
+        LS.UpdateExistingControls()
 
-	if GetCVar("setupLegendarySettingsCVAR") == nil then 
-		RegisterCVar("setupLegendarySettingsCVAR", 0 )
-	end
-	SetCVar("setupLegendarySettingsCVAR", 0)
- elseif event == "PLAYER_LOGOUT" then
-		if LegendarySettingsDB[LS.SpecID].Profiles[LegendarySettingsDB[LS.SpecID].SelectedProfile] then
-			for i, v in pairs(LS.Settings) do
-				LegendarySettingsDB[LS.SpecID].Profiles[LegendarySettingsDB[LS.SpecID].SelectedProfile][i] = v
-			end
-		end
-	elseif event == "ADDON_ACTION_FORBIDDEN" or event == "ADDON_ACTION_BLOCKED" then
-		--print(debugstack())
-	elseif event == "PLAYER_REGEN_DISABLED" then
-		--print("Entered Combat")
-	elseif event == "PLAYER_REGEN_ENABLED" then
-		--print("Exited Combat")
-	end
+        if GetCVar("setupLegendarySettingsCVAR") == nil then 
+            RegisterCVar("setupLegendarySettingsCVAR", 0 )
+        end
+        SetCVar("setupLegendarySettingsCVAR", 0)
+    elseif event == "PLAYER_LOGOUT" then
+        if LegendarySettingsDB[LS.SpecID].Profiles[LegendarySettingsDB[LS.SpecID].SelectedProfile] then
+            for i, v in pairs(LS.Settings) do
+                LegendarySettingsDB[LS.SpecID].Profiles[LegendarySettingsDB[LS.SpecID].SelectedProfile][i] = v
+            end
+        end
+    elseif event == "ADDON_ACTION_FORBIDDEN" or event == "ADDON_ACTION_BLOCKED" then
+        --print(debugstack())
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        --print("Entered Combat")
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        --print("Exited Combat")
+    end
 end
 
 --frame:EnableKeyboard(true)
@@ -517,7 +519,7 @@ function LS.InitMiniMapButton()
     -- Update position initially and when the button is dragged
     UpdatePosition()
 
-    MinimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    MinimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp")
     MinimapButton:RegisterForDrag("LeftButton")
     MinimapButton:SetMovable(true)
     MinimapButton:SetScript("OnDragStart", function(self)
@@ -547,6 +549,9 @@ function LS.InitMiniMapButton()
         elseif button == "RightButton" then
             -- Call the HideButton functionality
             HideButton_OnClick()
+        elseif button == "MiddleButton" then
+            -- Lock the toggle bar
+            LS.ToggleLockToggleBar()
         end
     end)
 
@@ -556,8 +561,9 @@ function LS.InitMiniMapButton()
         GameTooltip:AddLine("Legendary Rotations")
         GameTooltip:AddLine("|cFFFFFFFFLeft-click to open Settings.|r")
         GameTooltip:AddLine("|cFFFFFFFFRight-click to hide/show toggles.|r")
+        GameTooltip:AddLine("|cFFFFFFFFMiddle-click to lock toggle bar.|r")
         GameTooltip:AddLine("\n")
-        GameTooltip:AddLine("|cFFFFFFFFHold SHIFT and ALT (Left) to move Toggle Frame.|r")
+        GameTooltip:AddLine("|cFFFFFFFFHold SHIFT to move Toggle Frame.|r")
         GameTooltip:Show()
     end)
     MinimapButton:SetScript("OnLeave", function(self)
@@ -920,6 +926,29 @@ function LS.ReorderProfileFrame()
 		i = i + 1
 	end
 
+end
+
+function LS.LockToggleBar()
+    if FrameToggles then
+        FrameToggles:SetMovable(false)
+        FrameToggles:EnableMouse(false)
+        print("Toggle bar locked in place.")
+    end
+end
+function LS.UnlockToggleBar()
+	if FrameToggles then
+		FrameToggles:SetMovable(true)
+		FrameToggles:EnableMouse(true)
+		print("Toggle bar unlocked. Hold SHIFT to move.")
+	end
+end
+
+function LS.ToggleLockToggleBar()
+	if FrameToggles:IsMovable() then
+		LS.LockToggleBar()
+	else
+		LS.UnlockToggleBar()
+	end
 end
 
 function LS.ToggleTab(tab, minitab)
@@ -1642,12 +1671,12 @@ function LS.InitToggle(label, variable, default, explanation)
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseDown", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown() then
+			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StartMoving()
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseUp", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown() then
+			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StopMovingOrSizing()
 			end
 		end)
@@ -1715,12 +1744,12 @@ function LS.InitButtonMain(label, addonName)
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseDown", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown() then
+			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StartMoving()
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseUp", function(self, button)
-			if IsShiftKeyDown() and IsLeftAltKeyDown() then
+			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StopMovingOrSizing()
 			end
 		end)
@@ -1752,21 +1781,37 @@ function HideButton_OnClick()
 end
 
 local eventFrame = CreateFrame("Frame")
+local wasSettingsFrameVisible = false
+local wasFrameTogglesVisible = false
 
 -- Function to handle the events
 function HandleCutsceneEvent(self, event)
-    if event == "CINEMATIC_START" then
-        -- Hide the frames when the cinematic starts
-        if SettingsFrame:IsVisible() then
-            SettingsFrame:Hide()
-        end
-        if FrameToggles:IsVisible() then
-            FrameToggles:Hide()
-        end
-    end
+	if event == "CINEMATIC_START" then
+		-- Save the visibility state
+		wasSettingsFrameVisible = SettingsFrame:IsVisible()
+		wasFrameTogglesVisible = FrameToggles:IsVisible()
+		
+		-- Hide the frames when the cinematic starts
+		if wasSettingsFrameVisible then
+			SettingsFrame:Hide()
+		end
+		if wasFrameTogglesVisible then
+			FrameToggles:Hide()
+		end
+	elseif event == "CINEMATIC_STOP" then
+		-- Restore the visibility state
+		if wasSettingsFrameVisible then
+			SettingsFrame:Show()
+		end
+		if wasFrameTogglesVisible then
+			FrameToggles:Show()
+		end
+	end
 end
+
 -- Register for cinematic events
 eventFrame:RegisterEvent("CINEMATIC_START")
+eventFrame:RegisterEvent("CINEMATIC_STOP")
 
 -- Set the script to handle the events
 eventFrame:SetScript("OnEvent", HandleCutsceneEvent)
