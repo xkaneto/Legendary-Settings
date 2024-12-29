@@ -501,15 +501,9 @@ function LS.InitMiniMapButton()
     MaskTexture:SetPoint("CENTER", MinimapButton, "CENTER", 0, 0)
     IconTexture:AddMaskTexture(MaskTexture)
 
-    -- Create the gold border texture (outline circle)
-    local BorderTexture = MinimapButton:CreateTexture(nil, "OVERLAY")
-    BorderTexture:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-    BorderTexture:SetSize(54, 54)  -- Size of the gold circle border
-    BorderTexture:SetPoint("CENTER", MinimapButton, "CENTER", 10, -10)  -- Move the border down slightly
-
     -- Function to update the button's position around the minimap
     local function UpdatePosition()
-        local angle = LegendarySettingsDB.angle or 0
+        local angle = LegendarySettingsDB.angle or 180
         local radius = 110  -- Adjust based on the size of the minimap
         local xOffset = cos(angle) * radius
         local yOffset = sin(angle) * radius
@@ -926,29 +920,6 @@ function LS.ReorderProfileFrame()
 		i = i + 1
 	end
 
-end
-
-function LS.LockToggleBar()
-    if FrameToggles then
-        FrameToggles:SetMovable(false)
-        FrameToggles:EnableMouse(false)
-        print("Toggle bar locked in place.")
-    end
-end
-function LS.UnlockToggleBar()
-	if FrameToggles then
-		FrameToggles:SetMovable(true)
-		FrameToggles:EnableMouse(true)
-		print("Toggle bar unlocked. Hold SHIFT to move.")
-	end
-end
-
-function LS.ToggleLockToggleBar()
-	if FrameToggles:IsMovable() then
-		LS.LockToggleBar()
-	else
-		LS.UnlockToggleBar()
-	end
 end
 
 function LS.ToggleTab(tab, minitab)
@@ -1743,6 +1714,7 @@ function LS.InitButtonMain(label, addonName)
 				LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 			end
 		end)
+		LS.CheckToggleBarLock()
 		LS.Buttons["toggle"]:HookScript("OnMouseDown", function(self, button)
 			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StartMoving()
@@ -1867,6 +1839,41 @@ end
 
 function HideButton_OnDragStart()
 
+end
+
+
+
+function LS.LockToggleBar()
+	if FrameToggles then
+		FrameToggles:SetMovable(false)
+		FrameToggles:EnableMouse(false)
+		LegendarySettingsDB.ToggleBarLocked = true
+		print("Toggle bar locked in place.")
+	end
+end
+
+function LS.UnlockToggleBar()
+	if FrameToggles then
+		FrameToggles:SetMovable(true)
+		FrameToggles:EnableMouse(true)
+		LegendarySettingsDB.ToggleBarLocked = false
+		print("Toggle bar unlocked. Hold SHIFT to move.")
+	end
+end
+
+function LS.ToggleLockToggleBar()
+	if FrameToggles:IsMovable() then
+		LS.LockToggleBar()
+	else
+		LS.UnlockToggleBar()
+	end
+end
+
+function LS.CheckToggleBarLock()
+	-- Relock Toggle bar if LegendarySettingsDB.ToggleBarLocked = true
+	if LegendarySettingsDB.ToggleBarLocked then
+		LS.LockToggleBar()
+	end
 end
 
 -- Create a table to store messages and sounds
