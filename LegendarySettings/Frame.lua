@@ -1714,7 +1714,6 @@ function LS.InitButtonMain(label, addonName)
 				LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 			end
 		end)
-		LS.CheckToggleBarLock()
 		LS.Buttons["toggle"]:HookScript("OnMouseDown", function(self, button)
 			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StartMoving()
@@ -1841,8 +1840,6 @@ function HideButton_OnDragStart()
 
 end
 
-
-
 function LS.LockToggleBar()
 	if FrameToggles then
 		FrameToggles:SetMovable(false)
@@ -1866,13 +1863,6 @@ function LS.ToggleLockToggleBar()
 		LS.LockToggleBar()
 	else
 		LS.UnlockToggleBar()
-	end
-end
-
-function LS.CheckToggleBarLock()
-	-- Relock Toggle bar if LegendarySettingsDB.ToggleBarLocked = true
-	if LegendarySettingsDB.ToggleBarLocked then
-		LS.LockToggleBar()
 	end
 end
 
