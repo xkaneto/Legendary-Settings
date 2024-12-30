@@ -1872,61 +1872,71 @@ local bigWigsLogs = {
     sounds = {}
 }
 
--- Check if BigWigs is loaded
-local loading, finished = C_AddOns.IsAddOnLoaded("BigWigs_Core")
 
-if loading and finished then
-    -- Hook into the SendMessage function using hooksecurefunc
-    hooksecurefunc(BigWigsLoader, "SendMessage", function(self, event, ...)
-        if event == "BigWigs_Message" then
-            local module, key, text, color = ...
-            table.insert(bigWigsLogs.messages, {timestamp = GetTime(), text = text, color = color})
-        elseif event == "BigWigs_Sound" then
-            local module, key, sound = ...
-            table.insert(bigWigsLogs.sounds, {timestamp = GetTime(), sound = sound})
-        end
-    end)
+-- Reset the table when the player leaves combat
+local combatFrame = CreateFrame("Frame")
+combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 
-    -- Reset the table when the player leaves combat
-    local combatFrame = CreateFrame("Frame")
-    combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+combatFrame:SetScript("OnEvent", function(self, event)
+	if event == "PLAYER_REGEN_ENABLED" then
+		bigWigsLogs.messages = {}
+		bigWigsLogs.sounds = {}
+	end
+end)
 
-    combatFrame:SetScript("OnEvent", function(self, event)
-        if event == "PLAYER_REGEN_ENABLED" then
-            bigWigsLogs.messages = {}
-            bigWigsLogs.sounds = {}
-        end
-    end)
+-- Function to handle the events
+function HandleCombatEvents(self, event)
+	if event == "PLAYER_REGEN_DISABLED" then
+		-- Check if BigWigs is loaded
+		local loadingBW, finishedBW = C_AddOns.IsAddOnLoaded("BigWigs_Core")
+
+		if loadingBW and finishedBW then
+			-- Hook into the SendMessage function using hooksecurefunc
+			hooksecurefunc(BigWigsLoader, "SendMessage", function(self, event, ...)
+				if event == "BigWigs_Message" then
+					local module, key, text, color = ...
+					table.insert(bigWigsLogs.messages, {timestamp = GetTime(), text = text, color = color})
+				elseif event == "BigWigs_Sound" then
+					local module, key, sound = ...
+					table.insert(bigWigsLogs.sounds, {timestamp = GetTime(), sound = sound})
+				end
+			end)
+		end
+
+		-- Function to check the last message
+		function LS.checkLastMessage()
+			local lastMessage = bigWigsLogs.messages[#bigWigsLogs.messages]
+			if lastMessage and (GetTime() - lastMessage.timestamp) <= 4 then
+				local isTanking, status = UnitDetailedThreatSituation("player", "target")
+				-- Use Healing CDs
+				if lastMessage.color == "orange" then
+					return 1
+				-- Messages which require Defensives as a tank
+				elseif lastMessage.color == "purple" and isTanking then
+					return 2
+				end
+			end
+			return 0
+		end
+
+		-- Function to check the last sound
+		function LS.checkLastSound()
+			local lastSound = bigWigsLogs.sounds[#bigWigsLogs.sounds]
+			if lastSound and (GetTime() - lastSound.timestamp) <= 4 then
+				local isTanking, status = UnitDetailedThreatSituation("player", "target")
+				-- Use Self Defensives
+				if lastSound.sound == "alarm" then
+					return 1
+				-- Tank Swap
+				elseif lastSound.sound == "warning" and (isTanking or status == 2 or status == 3) then
+					return 2
+				end
+			end
+			return 0
+		end
+	end
 end
 
--- Function to check the last message
-function LS.checkLastMessage()
-    local lastMessage = bigWigsLogs.messages[#bigWigsLogs.messages]
-    if lastMessage and (GetTime() - lastMessage.timestamp) <= 4 then
-        local isTanking, status = UnitDetailedThreatSituation("player", "target")
-        -- Use Healing CDs
-        if lastMessage.color == "orange" then
-            return 1
-        -- Messages which require Defensives as a tank
-        elseif lastMessage.color == "purple" and isTanking then
-            return 2
-        end
-    end
-    return 0
-end
-
--- Function to check the last sound
-function LS.checkLastSound()
-    local lastSound = bigWigsLogs.sounds[#bigWigsLogs.sounds]
-    if lastSound and (GetTime() - lastSound.timestamp) <= 4 then
-        local isTanking, status = UnitDetailedThreatSituation("player", "target")
-        -- Use Self Defensives
-        if lastSound.sound == "alarm" then
-            return 1
-        -- Tank Swap
-        elseif lastSound.sound == "warning" and (isTanking or status == 2 or status == 3) then
-            return 2
-        end
-    end
-    return 0
-end
+-- Set the script to handle the events
+combatFrame:SetScript("OnEvent", HandleCombatEvents)
