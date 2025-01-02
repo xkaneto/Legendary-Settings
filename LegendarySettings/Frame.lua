@@ -1872,6 +1872,37 @@ local bigWigsLogs = {
     sounds = {}
 }
 
+-- Function to check the last message
+function LS.checkLastMessage()
+	local lastMessage = bigWigsLogs.messages[#bigWigsLogs.messages]
+	if lastMessage and (GetTime() - lastMessage.timestamp) <= 4 then
+		local isTanking, status = UnitDetailedThreatSituation("player", "target")
+		-- Use Healing CDs
+		if lastMessage.color == "orange" then
+			return 1
+		-- Messages which require Defensives as a tank
+		elseif lastMessage.color == "purple" and isTanking then
+			return 2
+		end
+	end
+	return 0
+end
+
+-- Function to check the last sound
+function LS.checkLastSound()
+	local lastSound = bigWigsLogs.sounds[#bigWigsLogs.sounds]
+	if lastSound and (GetTime() - lastSound.timestamp) <= 4 then
+		local isTanking, status = UnitDetailedThreatSituation("player", "target")
+		-- Use Self Defensives
+		if lastSound.sound == "alarm" then
+			return 1
+		-- Tank Swap
+		elseif lastSound.sound == "warning" and (isTanking or status == 2 or status == 3) then
+			return 2
+		end
+	end
+	return 0
+end
 
 -- Reset the table when the player leaves combat
 local combatFrame = CreateFrame("Frame")
@@ -1902,38 +1933,6 @@ function HandleCombatEvents(self, event)
 					table.insert(bigWigsLogs.sounds, {timestamp = GetTime(), sound = sound})
 				end
 			end)
-		end
-
-		-- Function to check the last message
-		function LS.checkLastMessage()
-			local lastMessage = bigWigsLogs.messages[#bigWigsLogs.messages]
-			if lastMessage and (GetTime() - lastMessage.timestamp) <= 4 then
-				local isTanking, status = UnitDetailedThreatSituation("player", "target")
-				-- Use Healing CDs
-				if lastMessage.color == "orange" then
-					return 1
-				-- Messages which require Defensives as a tank
-				elseif lastMessage.color == "purple" and isTanking then
-					return 2
-				end
-			end
-			return 0
-		end
-
-		-- Function to check the last sound
-		function LS.checkLastSound()
-			local lastSound = bigWigsLogs.sounds[#bigWigsLogs.sounds]
-			if lastSound and (GetTime() - lastSound.timestamp) <= 4 then
-				local isTanking, status = UnitDetailedThreatSituation("player", "target")
-				-- Use Self Defensives
-				if lastSound.sound == "alarm" then
-					return 1
-				-- Tank Swap
-				elseif lastSound.sound == "warning" and (isTanking or status == 2 or status == 3) then
-					return 2
-				end
-			end
-			return 0
 		end
 	end
 end
