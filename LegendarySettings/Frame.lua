@@ -1971,7 +1971,6 @@ updateFrame:SetScript("OnUpdate", function(self, elapsed)
     local loading, finished = C_AddOns.IsAddOnLoaded("HeroRotation")
     if not (loading and finished) then
         -- HeroRotation not loaded, bail out
-        print("HeroRotation is not loaded yet.")
         return
     end
 
