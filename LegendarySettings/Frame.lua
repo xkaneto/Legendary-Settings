@@ -90,26 +90,30 @@ LS.Settings = {}
 
 LS.DefaultSettings = {}
 
-local font = "Interface\\Addons\\LegendarySettings\\Fonts\\BB Condensed.TTF";
+local font = "Interface\\Addons\\LegendarySettings\\Fonts\\PTSansNarrow.TTF";
 
 local fontAlt = "Interface\\Addons\\LegendarySettings\\Fonts\\PTSansNarrow.TTF";
 
-local fontAltMulti = "Interface\\Addons\\LegendarySettings\\Fonts\\BB Condensed.TTF";
+local fontAltMulti = "Interface\\Addons\\LegendarySettings\\Fonts\\PTSansNarrow.TTF";
 
 local fontKor = "Interface\\Addons\\LegendarySettings\\Fonts\\BareunBatang 2Medium.ttf";
 
 local normalButtonFont = CreateFont("legendaryFontButtonNormal")
-normalButtonFont:SetFont(font, 12, "")
+normalButtonFont:SetFont(font, 11, "")
 normalButtonFont:SetTextColor(1, 0.725, 0.058, 1.0);
 local selectedButtonFont = CreateFont("legendaryFontButtonSelected")
-selectedButtonFont:SetFont(font, 12, "")
-selectedButtonFont:SetTextColor(0.0, 0.0, 0.0, 1.0);
+selectedButtonFont:SetFont(font, 11, "")
+selectedButtonFont:SetTextColor(1.0, 1.0, 1.0, 1.0);
+local normalButtonBlack = CreateFont("legendaryFontButtonBlack")
+normalButtonBlack:SetFont(font, 11, "")
+normalButtonBlack:SetTextColor(0, 0, 0, 1.0);
+
 local normalButtonFontS = CreateFont("legendaryFontButtonNormalS")
-normalButtonFontS:SetFont(font, 9, "")
+normalButtonFontS:SetFont(font, 10, "")
 normalButtonFontS:SetTextColor(1, 0.725, 0.058, 1.0);
 local selectedButtonFontS = CreateFont("legendaryFontButtonSelectedS")
-selectedButtonFontS:SetFont(font, 9, "")
-selectedButtonFontS:SetTextColor(0.0, 0.0, 0.0, 1.0);
+selectedButtonFontS:SetFont(font, 10, "")
+selectedButtonFontS:SetTextColor(1.0, 1.0, 1.0, 1.0);
 
 local normalFont = CreateFont("legendaryFontNormal")
 normalFont:SetFont(font, 10, "")
@@ -124,15 +128,15 @@ normalAccentFontAlt:SetFont(fontAlt, 10, "")
 normalAccentFontAlt:SetTextColor(1, 0.968, 0.0, 1.0);
 
 local fontAlternativeNormal = CreateFont("legendaryFontAlternativeNormal")
-fontAlternativeNormal:SetFont(fontAltMulti, 12, "")
+fontAlternativeNormal:SetFont(fontAltMulti, 10, "")
 fontAlternativeNormal:SetTextColor(1, 0.725, 0.058, 1.0);
 
 local fontKorNormal = CreateFont("legendaryFontKorNormal")
-fontKorNormal:SetFont(fontKor, 10, "")
+fontKorNormal:SetFont(fontKor, 9, "")
 fontKorNormal:SetTextColor(1, 0.725, 0.058, 1.0);
 
 local fontKorAccent = CreateFont("legendaryFontKorNormalAccent")
-fontKorAccent:SetFont(fontKor, 10, "")
+fontKorAccent:SetFont(fontKor, 9, "")
 fontKorAccent:SetTextColor(1, 0.968, 0.0, 1.0);
 
 
@@ -152,13 +156,11 @@ local function HandleCommands(msg, editbox)
         if LS.Toggles[string.lower(msg)] then
             LS.Toggles[string.lower(msg)] = false
             print(string.lower(msg)..' Off')
-            LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
             LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
             RaidNotice_AddMessage(RaidWarningFrame, string.lower(msg)..' Off', ChatTypeInfo["RAID_WARNING"])
         else
             LS.Toggles[string.lower(msg)] = true
             print(string.lower(msg)..' On')
-            LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")
             LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
             RaidNotice_AddMessage(RaidWarningFrame, string.lower(msg)..' On', ChatTypeInfo["RAID_WARNING"])
         end
@@ -202,6 +204,17 @@ function frame:OnEvent(event, arg1)
         -- Initialize position data if it does not exist
         if not LegendarySettingsDB.position then
             LegendarySettingsDB.position = { x = -5, y = 5 }
+        end
+		-- Restore the position of the toggle bar
+        if LegendarySettingsDB.toggleBarPosition then
+            FrameToggles:ClearAllPoints()
+            FrameToggles:SetPoint(unpack(LegendarySettingsDB.toggleBarPosition))
+        end
+		-- Restore the locked state of the toggle bar
+        if LegendarySettingsDB.ToggleBarLocked then
+            LS.LockToggleBar()
+        else
+            LS.UnlockToggleBar()
         end
     elseif event == "PLAYER_LOGIN" then
         local SpecIndex = GetSpecialization()
@@ -358,16 +371,12 @@ function LS.InitTabs(...)
 	LoadSaveButton:SetSize(LS.TabButtonSizeX, LS.TabButtonSizeY)
 	LoadSaveButton:SetPoint("TOPLEFT", SettingsFrameTabs, "BOTTOMLEFT", LS.TabOffsetX, LS.TabOffsetY+LS.TabButtonSizeY)
 	LoadSaveButton:SetText("Profiles")
-	LoadSaveButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-	LoadSaveButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	LoadSaveButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 	LoadSaveButton:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 
 	CommandsButton:SetSize(LS.TabButtonSizeX, LS.TabButtonSizeY)
 	CommandsButton:SetPoint("TOPLEFT", SettingsFrameTabs, "BOTTOMLEFT", LS.TabOffsetX, LS.TabOffsetY+LS.TabButtonSizeY + LS.TabButtonSizeY +LS.TabButtonsSpacingY)
 	CommandsButton:SetText("Commands")
-	CommandsButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-	CommandsButton:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	CommandsButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 	CommandsButton:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 
@@ -387,8 +396,6 @@ function LS.InitTabs(...)
 		LS.Tabs[i].Button:SetPoint("TOPLEFT", SettingsFrameTabs, "TOPLEFT", LS.TabOffsetX, -LS.TabOffsetY + LS.TabNextOffsetY)
 		LS.Tabs[i].Button:SetSize(LS.TabButtonSizeX, LS.TabButtonSizeY)
 		LS.Tabs[i].Button:SetText(arg[i])
-		LS.Tabs[i].Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-		LS.Tabs[i].Button:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 		LS.Tabs[i].Button:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 		LS.Tabs[i].Button:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 
@@ -455,8 +462,6 @@ function LS.InitMiniTabs(tab, ...)
 		LS.Tabs[tab].MiniTabs[i].Button:SetPoint("BOTTOMLEFT", LS.Tabs[tab].CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX + LS.MiniTabNextOffsetX, LS.MiniTabOffsetY)
 		LS.Tabs[tab].MiniTabs[i].Button:SetSize(LS.MiniTabButtonSizeX, LS.MiniTabButtonSizeY)
 		LS.Tabs[tab].MiniTabs[i].Button:SetText(arg[i])
-		LS.Tabs[tab].MiniTabs[i].Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-		LS.Tabs[tab].MiniTabs[i].Button:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 		LS.Tabs[tab].MiniTabs[i].Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 		LS.Tabs[tab].MiniTabs[i].Button:SetHighlightFontObject(_G["legendaryFontButtonSelectedS"])
 
@@ -619,8 +624,6 @@ function LS.InitProfilesTab()
 		LS.SettingsFrameTabCommands.MiniTabs[i].Button:SetPoint("BOTTOMLEFT", LS.SettingsFrameTabCommands.CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX + miniTabNextOffsetXCommands, LS.MiniTabOffsetY)
 		LS.SettingsFrameTabCommands.MiniTabs[i].Button:SetSize(LS.MiniTabButtonSizeX, LS.MiniTabButtonSizeY)
 		LS.SettingsFrameTabCommands.MiniTabs[i].Button:SetText(commandTabNames[i])
-		LS.SettingsFrameTabCommands.MiniTabs[i].Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-		LS.SettingsFrameTabCommands.MiniTabs[i].Button:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 		LS.SettingsFrameTabCommands.MiniTabs[i].Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 		LS.SettingsFrameTabCommands.MiniTabs[i].Button:SetHighlightFontObject(_G["legendaryFontButtonSelectedS"])
 
@@ -654,8 +657,6 @@ function LS.InitProfilesTab()
 		Button:SetPoint("BOTTOMRIGHT", LS.ProfileButtons[k], "BOTTOMLEFT", 130, 14)
 		--Button:SetSize(100, 50)
 		Button:SetText(k)
-		Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-		Button:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 		Button:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 		Button:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 		Button:SetScript("OnClick", function(self, button, down)
@@ -668,8 +669,6 @@ function LS.InitProfilesTab()
 		ButtonDelete:SetPoint("TOPLEFT", LS.ProfileButtons[k], "TOPRIGHT", -130, -10)
 		ButtonDelete:SetPoint("BOTTOMRIGHT", LS.ProfileButtons[k], "BOTTOMRIGHT", -10, 14)
 		ButtonDelete:SetText("Delete Profile")
-		ButtonDelete:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-		ButtonDelete:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 		ButtonDelete:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 		ButtonDelete:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 		ButtonDelete:SetScript("OnClick", function(self, button, down)
@@ -690,15 +689,12 @@ function LS.InitProfilesTab()
 	texture:SetAllPoints()
 	texture:SetPoint("TOPLEFT", EditBox ,"TOPLEFT", -4, 0)
 	texture:SetPoint("BOTTOMRIGHT", EditBox ,"BOTTOMRIGHT", 0, 0)
-	texture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Editbox")
 	EditBox.texture = texture
 
 	local ButtonCreate = CreateFrame("Button", nil, LS.SettingsFrameTabProfiles.CategoriesBody, "UIPanelButtonTemplate")
 	ButtonCreate:SetPoint("BOTTOMRIGHT", LS.SettingsFrameTabProfiles.CategoriesBody, "BOTTOMRIGHT", -LS.MiniTabOffsetX, LS.MiniTabOffsetY)
 	ButtonCreate:SetSize(LS.MiniTabButtonSizeX, LS.MiniTabButtonSizeY)
 	ButtonCreate:SetText("Create Profile")
-	ButtonCreate:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-	ButtonCreate:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	ButtonCreate:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 	ButtonCreate:SetHighlightFontObject(_G["legendaryFontButtonSelectedS"])
 	ButtonCreate:SetScript("OnClick", function(self, button, down)
@@ -709,8 +705,6 @@ function LS.InitProfilesTab()
 	ButtonResetToDefault:SetPoint("BOTTOMLEFT", LS.SettingsFrameTabProfiles.CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX, LS.MiniTabOffsetY)
 	ButtonResetToDefault:SetSize(LS.MiniTabButtonSizeX*2+10, LS.MiniTabButtonSizeY)
 	ButtonResetToDefault:SetText("Reset Selected Profile to Default")
-	ButtonResetToDefault:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")--1Button BigButtonNotHighlighted
-	ButtonResetToDefault:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	ButtonResetToDefault:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 	ButtonResetToDefault:SetHighlightFontObject(_G["legendaryFontButtonSelectedS"])
 	ButtonResetToDefault:SetScript("OnClick", function(self, button, down)
@@ -872,8 +866,6 @@ function LS.CreateProfile(profile)
 	ButtonDelete:SetPoint("TOPLEFT", LS.ProfileButtons[profile], "TOPRIGHT", -130, -10)
 	ButtonDelete:SetPoint("BOTTOMRIGHT", LS.ProfileButtons[profile], "BOTTOMRIGHT", -10, 14)
 	ButtonDelete:SetText("Delete Profile")
-	ButtonDelete:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
-	ButtonDelete:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	ButtonDelete:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 	ButtonDelete:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 	ButtonDelete:SetScript("OnClick", function(self, button, down)
@@ -884,8 +876,6 @@ function LS.CreateProfile(profile)
 	Button:SetPoint("TOPLEFT", LS.ProfileButtons[profile], "TOPLEFT", 10, -10)
 	Button:SetPoint("BOTTOMRIGHT", LS.ProfileButtons[profile], "BOTTOMLEFT", 130, 14)
 	Button:SetText(profile)
-	Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
-	Button:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	Button:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 	Button:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 	Button:SetScript("OnClick", function(self, button, down)
@@ -928,62 +918,50 @@ function LS.ToggleTab(tab, minitab)
 			for j,u in ipairs(LS.Tabs[i].MiniTabs) do 
 				if j == minitab then
 					u.Body:Show();
-					u.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")--2ndtry 
 					u.Button:SetNormalFontObject(_G["legendaryFontButtonSelectedS"])
 				else
 					u.Body:Hide();
-					u.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
 					u.Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 				end
 			end
 			v.CategoriesBody:Show();
-			v.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")--2ndtry
 			v.Button:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 		else
 			for j,u in ipairs(LS.Tabs[i].MiniTabs) do 
 				u.Body:Hide();
-				u.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
 				u.Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 			end
 			v.CategoriesBody:Hide();
-			v.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") --BigButtonS
 			v.Button:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 		end
 	end
 	if tab == 0 then
 		LS.SettingsFrameTabProfiles.Body:Show();
 		LS.SettingsFrameTabProfiles.CategoriesBody:Show();
-		LoadSaveButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")--2ndtry
 		LoadSaveButton:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 	else
 		LS.SettingsFrameTabProfiles.Body:Hide();
 		LS.SettingsFrameTabProfiles.CategoriesBody:Hide();
-		LoadSaveButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
 		LoadSaveButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 	end
 	if tab == 99 then
 		for j,u in ipairs(LS.SettingsFrameTabCommands.MiniTabs) do 
 			if j == minitab then
 				u.Body:Show();
-				u.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")--2ndtry 
 				u.Button:SetNormalFontObject(_G["legendaryFontButtonSelectedS"])
 			else
 				u.Body:Hide();
-				u.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
 				u.Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 			end
 		end
 		LS.SettingsFrameTabCommands.CategoriesBody:Show();
-		CommandsButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")--2ndtry
 		CommandsButton:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 	else
 		for j,u in ipairs(LS.SettingsFrameTabCommands.MiniTabs) do 
 			u.Body:Hide();
-			u.Button:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
 			u.Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 		end
 		LS.SettingsFrameTabCommands.CategoriesBody:Hide();
-		CommandsButton:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") --BigButtonS
 		CommandsButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 	end
 	LS.MinimizeDropdowns(nil)
@@ -1048,8 +1026,6 @@ function LS.CreateDropdownControl(name, parent, positionX, positionY, width, hei
 	local optionHeight = 15;
 	
 	local f = CreateFrame("Button", "DROPDOWN"..name, parent, "UIPanelButtonTemplate")
-	f:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\dropdown")
-	f:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 	f:SetNormalFontObject(_G["legendaryFontNormal"])
 	f:SetHighlightFontObject(_G["legendaryFontNormalAccent"])
 	f:SetSize(width, height)
@@ -1062,8 +1038,6 @@ function LS.CreateDropdownControl(name, parent, positionX, positionY, width, hei
 	--Create Buttons For Options
 	for i=1,#f.options do
 		f.optionControls[i] = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-		f.optionControls[i]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Editbox")
-		f.optionControls[i]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 		f.optionControls[i]:SetNormalFontObject(_G["legendaryFontNormal"])
 		f.optionControls[i]:SetHighlightFontObject(_G["legendaryFontNormalAccent"])
 		f.optionControls[i]:SetText(f.options[i])
@@ -1222,8 +1196,6 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 
 		--Create a Default "None" button
 		dropdown.optionControls[1] = CreateFrame("Button", nil, dropdown, "UIPanelButtonTemplate")
-		dropdown.optionControls[1]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Editbox")
-		dropdown.optionControls[1]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 		dropdown.optionControls[1]:SetNormalFontObject(_G["legendaryFontNormal"])
 		dropdown.optionControls[1]:SetHighlightFontObject(_G["legendaryFontNormalAccent"])
 		dropdown.optionControls[1]:SetText("None")
@@ -1243,8 +1215,6 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 		--Create new Option buttons
 		for i=2,(#PartyUnits+1) do
 			dropdown.optionControls[i] = CreateFrame("Button", nil, dropdown, "UIPanelButtonTemplate")
-			dropdown.optionControls[i]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Editbox")
-			dropdown.optionControls[i]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 			if (GetLocale() == "koKR") then
 				dropdown.optionControls[i]:SetNormalFontObject(_G["legendaryFontKorNormal"])
 				dropdown.optionControls[i]:SetHighlightFontObject(_G["legendaryFontKorNormalAccent"])
@@ -1313,8 +1283,6 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 
 			--Create a Default "None" button
 			dropdown.optionControls[1] = CreateFrame("Button", nil, dropdown, "UIPanelButtonTemplate")
-			dropdown.optionControls[1]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Editbox")
-			dropdown.optionControls[1]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 			dropdown.optionControls[1]:SetNormalFontObject(_G["legendaryFontNormal"])
 			dropdown.optionControls[1]:SetHighlightFontObject(_G["legendaryFontNormalAccent"])
 			dropdown.optionControls[1]:SetText("None")
@@ -1333,8 +1301,6 @@ function LS.AddGroupDropdown(tab, minitab, line, variable, label, includeHealers
 			--Create new Option buttons
 			for i=2,#PartyUnits+1 do
 				dropdown.optionControls[i] = CreateFrame("Button", nil, dropdown, "UIPanelButtonTemplate")
-				dropdown.optionControls[i]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Editbox")
-				dropdown.optionControls[i]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 				if (GetLocale() == "koKR") then
 					dropdown.optionControls[i]:SetNormalFontObject(_G["legendaryFontKorNormal"])
 					dropdown.optionControls[i]:SetHighlightFontObject(_G["legendaryFontKorNormalAccent"])
@@ -1425,7 +1391,6 @@ function LS.AddTextbox(tab, minitab, line, variable, label, default)
 	texture:SetAllPoints()
 	texture:SetPoint("TOPLEFT", EditBox ,"TOPLEFT", -4, 0)
 	texture:SetPoint("BOTTOMRIGHT", EditBox ,"BOTTOMRIGHT", 0, 0)
-	texture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Editbox")
 	EditBox.texture = texture
 
 	--Init value
@@ -1473,9 +1438,6 @@ function LS.AddCheckbox(tab, minitab, line, variable, label, default)
 	MyCheckbox:SetSize(LS.CheckboxSize,LS.CheckboxSize);
 	MyCheckbox:SetHitRectInsets(0,0,0,0)
 	MyCheckbox:SetPoint("TOP", LS.Tabs[tab].MiniTabs[minitab].Body, "TOPLEFT", 80 + LS.Tabs[tab].MiniTabs[minitab].Lines[line].NextOffset, -LS.CheckboxSize - LS.SpacingBetweenLines*line)
-	MyCheckbox:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Unchecked")
-	MyCheckbox:SetPushedTexture("Interface\\Addons\\LegendarySettings\\Vectors\\Checked")
-	MyCheckbox:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
 
 	--Init value
 	MyCheckbox:SetChecked(currentValue)
@@ -1524,8 +1486,6 @@ function LS.AddSlider(tab, minitab, line, variable, label, min, max, default)
 	--MySlider:SetStepsPerPage(1)
 	MySlider:Show()
 
-	MySlider:SetThumbTexture("Interface\\Addons\\LegendarySettings\\Vectors\\sliderThumb");
-
 	local textureThumb = MySlider:GetThumbTexture()
 	textureThumb:SetWidth(15)
 	textureThumb:SetHeight(15)
@@ -1536,7 +1496,6 @@ function LS.AddSlider(tab, minitab, line, variable, label, min, max, default)
 	texture:SetAllPoints()
 	texture:SetPoint("TOPLEFT", MySlider ,"TOPLEFT", -2, 0)
 	texture:SetPoint("BOTTOMRIGHT", MySlider ,"BOTTOMRIGHT", 0, -14)
-	texture:SetTexture("Interface\\Addons\\LegendarySettings\\Vectors\\slider")
 	MySlider.texture = texture
 
 	--MySlider.tooltipText = 'This is the Tooltip hint'
@@ -1615,30 +1574,30 @@ function LS.InitToggle(label, variable, default, explanation)
 		LS.Buttons[string.lower(variable)] = CreateFrame("Button", nil, FrameToggles, "UIPanelButtonTemplate")
 
 		LS.Buttons[string.lower(variable)]:SetPoint("TOPLEFT", FrameToggles, "TOPLEFT", 3, -28 - 25*(numberOfRegisteredToggles-2))
-		LS.Buttons[string.lower(variable)]:SetSize(83, 25)
+		LS.Buttons[string.lower(variable)]:SetSize(75, 25)
 		LS.Buttons[string.lower(variable)]:SetText(label);
 		LS.Buttons[string.lower(variable)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
 		LS.Buttons[string.lower(variable)]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
-		LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+		LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonBlack"])
 		LS.Buttons[string.lower(variable)]:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 		if LS.Toggles[string.lower(variable)] then
 			LS.Buttons[string.lower(variable)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton") -- 2ndtry
-			LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
+			LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonBlack"])
 		else
 			LS.Buttons[string.lower(variable)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
-			LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+			LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 		end
 		LS.Buttons[string.lower(variable)]:SetScript("OnClick", function(self, button, down)
 			if LS.Toggles[string.lower(variable)] then
 				LS.Toggles[string.lower(variable)] = false
 				--self:SetText(label.." Off");
 				LS.Buttons[string.lower(variable)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
-				LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+				LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 			else
 				LS.Toggles[string.lower(variable)] = true
 				--self:SetText(label.." On");
 				LS.Buttons[string.lower(variable)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")  -- 2ndtry
-				LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
+				LS.Buttons[string.lower(variable)]:SetNormalFontObject(_G["legendaryFontButtonBlack"])
 			end
 		end)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseDown", function(self, button)
@@ -1649,6 +1608,9 @@ function LS.InitToggle(label, variable, default, explanation)
 		LS.Buttons[string.lower(variable)]:HookScript("OnMouseUp", function(self, button)
 			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StopMovingOrSizing()
+				-- Save the position of the toggle bar
+				local point, relativeTo, relativePoint, xOfs, yOfs = FrameToggles:GetPoint()
+				LegendarySettingsDB.toggleBarPosition = { point, relativeTo, relativePoint, xOfs, yOfs }
 			end
 		end)
 	end
@@ -1688,30 +1650,30 @@ function LS.InitButtonMain(label, addonName)
 		LS.Buttons["toggle"] = CreateFrame("Button", nil, FrameToggles, "UIPanelButtonTemplate")
 
 		LS.Buttons["toggle"]:SetPoint("TOPLEFT", FrameToggles, "TOPLEFT", 3, -3)
-		LS.Buttons["toggle"]:SetSize(83, 25)
+		LS.Buttons["toggle"]:SetSize(75, 25)
 		LS.Buttons["toggle"]:SetText("Toggle");
 		LS.Buttons["toggle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
 		LS.Buttons["toggle"]:SetHighlightTexture("Interface\\Addons\\LegendarySettings\\Vectors\\White", "MOD")
-		LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+		LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonBlack"])
 		LS.Buttons["toggle"]:SetHighlightFontObject(_G["legendaryFontButtonSelected"])
 		if LS.Toggles["toggle"] then
 			LS.Buttons["toggle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton") -- 2ndtry
-			LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
+			LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonBlack"])
 		else
 			LS.Buttons["toggle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
-			LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+			LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 		end
 		LS.Buttons["toggle"]:SetScript("OnClick", function(self, button, down)
 			if LS.Toggles["toggle"] then
-				LS.Toggles["toggle"] = false 
+				LS.Toggles["toggle"] = false
 				--self:SetText(label.." Off");
 				LS.Buttons["toggle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
-				LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
+				LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 			else
 				LS.Toggles["toggle"] = true
 				--self:SetText(label.." On");
 				LS.Buttons["toggle"]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton")  -- 2ndtry
-				LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
+				LS.Buttons["toggle"]:SetNormalFontObject(_G["legendaryFontButtonBlack"])
 			end
 		end)
 		LS.Buttons["toggle"]:HookScript("OnMouseDown", function(self, button)
@@ -1722,6 +1684,9 @@ function LS.InitButtonMain(label, addonName)
 		LS.Buttons["toggle"]:HookScript("OnMouseUp", function(self, button)
 			if IsShiftKeyDown() and FrameToggles:IsMovable() then
 				FrameToggles:StopMovingOrSizing()
+				-- Save the position of the toggle bar
+				local point, relativeTo, relativePoint, xOfs, yOfs = FrameToggles:GetPoint()
+				LegendarySettingsDB.toggleBarPosition = { point, relativeTo, relativePoint, xOfs, yOfs }
 			end
 		end)
 	end
@@ -1791,13 +1756,11 @@ function ToggleButtonTop_OnClick(self, args)
 	if LS.MainButton.Toggled then
 		LS.MainButton.Toggled = false
 		--self:SetText(LS.MainButton.Name.." Off");
-		self:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
 		self:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 		LS.Toggles["main"] = false
 	else
 		LS.MainButton.Toggled = true
 		--self:SetText(LS.MainButton.Name.." On");
-		self:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton") -- 2ndtry
 		self:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 		LS.Toggles["main"] = true
 	end
@@ -1866,6 +1829,8 @@ function LS.ToggleLockToggleBar()
 	end
 end
 
+-----------------------------------------------------------------------------------------------------------------
+
 -- Create a table to store messages and sounds
 local bigWigsLogs = {
     messages = {},
@@ -1917,12 +1882,11 @@ combatFrame:SetScript("OnEvent", function(self, event)
 end)
 
 -- Function to handle the events
-function HandleCombatEvents(self, event)
-	if event == "PLAYER_REGEN_DISABLED" then
-		-- Check if BigWigs is loaded
-		local loadingBW, finishedBW = C_AddOns.IsAddOnLoaded("BigWigs_Core")
-
-		if loadingBW and finishedBW then
+local function BigWigsHook()
+	-- Check if BigWigs is loaded
+	local loadingBW, finishedBW = C_AddOns.IsAddOnLoaded("BigWigs_Core")
+	if loadingBW and finishedBW then
+		if not LS._BigWigsHooked then
 			-- Hook into the SendMessage function using hooksecurefunc
 			hooksecurefunc(BigWigsLoader, "SendMessage", function(self, event, ...)
 				if event == "BigWigs_Message" then
@@ -1933,9 +1897,151 @@ function HandleCombatEvents(self, event)
 					table.insert(bigWigsLogs.sounds, {timestamp = GetTime(), sound = sound})
 				end
 			end)
+			LS._BigWigsHooked = true
 		end
 	end
 end
 
 -- Set the script to handle the events
 combatFrame:SetScript("OnEvent", HandleCombatEvents)
+
+
+LS.HrData = {
+	CastText = "",
+    CycleSpellID = 0,
+    CycleMO = false,
+    CycleUnit = false,
+    Token = nil,
+    NotInRange = false,
+    SpellID = 0,
+	TargetInMelee = 0,
+	TargetInRange = 0,
+	TargetInSplash = 0,
+}
+
+-- Create a frame for our OnUpdate script
+local updateFrame = CreateFrame("Frame", "MyLegendaryUpdateFrame", UIParent)
+
+-- We only want to set up the hook if HeroRotation is loaded
+-- so we can do that once when the addon loads OR each OnUpdate check.
+local function SetupHeroRotationHook()
+    local loading, finished = C_AddOns.IsAddOnLoaded("HeroRotation")
+    if loading and finished then
+        local HR = HeroRotation
+        -- HOOK the AddIcon function just once (only if not already hooked).
+        -- This will let us capture the local 'Token' each time HR.Nameplate.AddIcon is called.
+        if not LS._MyLegendaryHooked then
+            hooksecurefunc(HR.Nameplate, "AddIcon", function(ThisUnit, Object)
+                if ThisUnit and ThisUnit.UnitID then
+                    LS.HrData.Token = string.lower(ThisUnit.UnitID)
+                else
+                    LS.HrData.Token = nil
+                end
+            end)
+            LS._MyLegendaryHooked = true
+        end
+    end
+end
+
+local function CastAnnotatedHook()
+	-- Check if HeroRotation is loaded
+	local loadingHR, finishedHR = C_AddOns.IsAddOnLoaded("HeroRotation")
+	if loadingHR and finishedHR then
+		-- Save the original HR.Cast function
+		local HR = HeroRotation
+		-- HOOK the CastAnnotated function just once (only if not already hooked).
+		-- This will let us capture the local 'Text' each time HR.CastAnnotated is called.
+		if not LS._TextHooked then
+			hooksecurefunc(HR, "CastAnnotated", function(Object, OffGCD, Text, OutofRange, FontSize)
+				LS.HrData.CastText = Text
+			end)
+			LS._TextHooked = true
+		end
+	end
+end
+
+-- Now our OnUpdate handler
+updateFrame:SetScript("OnUpdate", function(self, elapsed)
+    -- Attempt to hook if not already
+    SetupHeroRotationHook()
+	CastAnnotatedHook()
+	BigWigsHook()
+
+    -- Check again if HeroRotation is loaded
+    local loading, finished = C_AddOns.IsAddOnLoaded("HeroRotation")
+    if not (loading and finished) then
+        -- HeroRotation not loaded, bail out
+        print("HeroRotation is not loaded yet.")
+        return
+    end
+
+    local HR = HeroRotation
+	local HL = HeroLib
+
+	local EnemiesMelee = HL.Unit.Player:GetEnemiesInMeleeRange(10)
+	local EnemiesRange = HL.Unit.Player:GetEnemiesInRange(40)
+	local Enemies10ySplash = HL.Unit.Target:GetEnemiesInSplashRange(10)
+	if #EnemiesMelee > 0 then
+		LS.HrData.TargetInMelee = #EnemiesMelee
+	end
+	if #EnemiesRange > 0 then
+		LS.HrData.TargetInRange = #EnemiesRange
+	end
+	if #Enemies10ySplash > 0 then
+		LS.HrData.TargetInSplash = #Enemies10ySplash
+	end
+
+    -- If the LeftIconFrame exists and is visible, do our logic
+    if HR.LeftIconFrame and HR.LeftIconFrame:IsVisible() then
+        LS.HrData.CycleSpellID = HR.LeftIconFrame.ID
+        -- 'Token' was saved into LS.HrData.Token by our hook
+        local token = LS.HrData.Token
+        if token then
+            local nameplate = C_NamePlate.GetNamePlateForUnit(token)
+            if nameplate and nameplate.namePlateUnitGUID then
+                local nameplateUUID = nameplate.namePlateUnitGUID
+
+                if UnitGUID("mouseover") == nameplateUUID then
+                    LS.HrData.CycleMO = true
+                    LS.HrData.CycleUnit = false
+                else
+                    LS.HrData.CycleMO = false
+                    LS.HrData.CycleUnit = true
+                end
+            else
+                -- If there's no valid nameplate for that token,
+                -- we could reset or do some fallback
+                LS.HrData.CycleMO = false
+                LS.HrData.CycleUnit = false
+            end
+        else
+            -- We don't have a Token yet
+            LS.HrData.CycleMO = false
+            LS.HrData.CycleUnit = false
+        end
+    else
+        -- LeftIconFrame not visible; reset CycleSpellID
+        LS.HrData.CycleSpellID = 0
+        LS.HrData.CycleMO = false
+        LS.HrData.CycleUnit = false
+    end
+
+    if HR.MainIconFrame and HR.MainIconFrame:IsVisible() then
+        -- Do something with HR.MainIconFrame.ID
+        local r, g, b = HR.MainIconFrame.Texture:GetVertexColor()
+        if g < 1 and g > 0.4 and b < 1 then
+            LS.HrData.NotInRange = true
+        else
+            LS.HrData.NotInRange = false
+        end
+
+        if HR.MainIconFrame.ID and not LS.HrData.NotInRange then
+            LS.HrData.SpellID = HR.MainIconFrame.ID
+        else
+            LS.HrData.SpellID = 0
+        end
+    else
+        LS.HrData.SpellID = 0
+        LS.HrData.NotInRange = false
+    end
+end)
