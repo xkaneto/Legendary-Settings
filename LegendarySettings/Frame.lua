@@ -156,14 +156,12 @@ local function HandleCommands(msg, editbox)
         if LS.Toggles[string.lower(msg)] then
             LS.Toggles[string.lower(msg)] = false
             print(string.lower(msg)..' Off')
-            LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
-			LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted") -- BigButtonS
+            LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonNormal"])
             RaidNotice_AddMessage(RaidWarningFrame, string.lower(msg)..' Off', ChatTypeInfo["RAID_WARNING"])
         else
             LS.Toggles[string.lower(msg)] = true
             print(string.lower(msg)..' On')
-            LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonBlack"])
-			LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButton") -- 2ndtry
+            LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
             RaidNotice_AddMessage(RaidWarningFrame, string.lower(msg)..' On', ChatTypeInfo["RAID_WARNING"])
         end
     else
@@ -242,7 +240,7 @@ function frame:OnEvent(event, arg1)
         LS.InitProfilesTab()
         LS.UpdateExistingControls()
 
-        if GetCVar("setupLegendarySettingsCVAR") == nil then 
+        if GetCVar("setupLegendarySettingsCVAR") == nil then
             RegisterCVar("setupLegendarySettingsCVAR", 0 )
         end
         SetCVar("setupLegendarySettingsCVAR", 0)
@@ -391,7 +389,7 @@ function LS.InitTabs(...)
 		LS.Tabs[i].CategoriesBody:SetSize(LS.TabBodySizeX, LS.TabBodyCategoriesSizeY)
 		LS.Tabs[i].CategoriesBody:Hide();
 		LS.Tabs[i].CategoriesBody:SetBackdrop(backdropInfo)
-	
+
 		LS.Tabs[i].MiniTabs = {}
 
 		LS.Tabs[i].Button = CreateFrame("Button", nil, SettingsFrameTabs, "UIPanelButtonTemplate")
@@ -446,7 +444,7 @@ function LS.InitMiniTabs(tab, ...)
 	}
 
 	LS.MiniTabNextOffsetX = 0
-	
+
 	for i=1,#arg do
 		LS.Tabs[tab].MiniTabs[i] = {}
 		LS.Tabs[tab].MiniTabs[i].Lines = {}
@@ -702,7 +700,7 @@ function LS.InitProfilesTab()
 	ButtonCreate:SetScript("OnClick", function(self, button, down)
 		LS.CreateProfile(EditBox:GetText())
 	end)
-	
+
 	local ButtonResetToDefault = CreateFrame("Button", nil, LS.SettingsFrameTabProfiles.CategoriesBody, "UIPanelButtonTemplate")
 	ButtonResetToDefault:SetPoint("BOTTOMLEFT", LS.SettingsFrameTabProfiles.CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX, LS.MiniTabOffsetY)
 	ButtonResetToDefault:SetSize(LS.MiniTabButtonSizeX*2+10, LS.MiniTabButtonSizeY)
@@ -740,7 +738,7 @@ function LS.InitProfilesTab()
 	--		HideButton:SetMovable(true);
 	--	end
 	--end)
-	
+
 	--Version label
 	LS.SettingsFrameTabProfiles.VersionLabel = CreateFrame("Frame", nil, LS.SettingsFrameTabProfiles.CategoriesBody)
 	LS.SettingsFrameTabProfiles.VersionLabel:SetPoint("BOTTOMLEFT", LS.SettingsFrameTabProfiles.CategoriesBody, "BOTTOMLEFT", LS.MiniTabOffsetX + LS.MiniTabButtonSizeX*5+10 + LS.MiniTabOffsetX, LS.MiniTabOffsetY)
@@ -760,7 +758,7 @@ function LS.InitProfilesTab()
 	LS.AddLabelForCommands(5, 1, "If you want to queue other spells, ask the responsible Dev")
 	LS.AddLabelForCommands(6, 0, "These spells can be queued to cast on focus")
 	LS.AddLabelForCommands(6, 1, "If you want to queue other spells, ask the responsible Dev")
-	
+
 
 	--[[
 	local ButtonLockUnlockToggles = CreateFrame("Button", nil, SettingsFrameTabProfiles, "UIPanelButtonTemplate")
@@ -836,9 +834,9 @@ function LS.CreateProfile(profile)
 	if currentProfileCount >= LS.MaxProfiles then
 		return
 	end
-	
+
 	local profileID = 0
-	
+
 	if currentProfileCount > 0 then
 		profileID = LegendarySettingsDB[LS.SpecID].Profiles[LS.GetProfileKeysInOrder()[1]].ID + 1
 	end
@@ -850,9 +848,9 @@ function LS.CreateProfile(profile)
 	end
 
 	LegendarySettingsDB[LS.SpecID].Profiles[profile].ID = profileID
-	
+
 	--Add a new Profile Button
-	
+
 	LS.ProfileButtons[profile] = CreateFrame("Frame", nil, LS.SettingsFrameTabProfiles.Body, "BackdropTemplate")
 	LS.ProfileButtons[profile]:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -915,9 +913,9 @@ function LS.ReorderProfileFrame()
 end
 
 function LS.ToggleTab(tab, minitab)
-	for i,v in ipairs(LS.Tabs) do 
+	for i,v in ipairs(LS.Tabs) do
 		if i == tab then
-			for j,u in ipairs(LS.Tabs[i].MiniTabs) do 
+			for j,u in ipairs(LS.Tabs[i].MiniTabs) do
 				if j == minitab then
 					u.Body:Show();
 					u.Button:SetNormalFontObject(_G["legendaryFontButtonSelectedS"])
@@ -929,7 +927,7 @@ function LS.ToggleTab(tab, minitab)
 			v.CategoriesBody:Show();
 			v.Button:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 		else
-			for j,u in ipairs(LS.Tabs[i].MiniTabs) do 
+			for j,u in ipairs(LS.Tabs[i].MiniTabs) do
 				u.Body:Hide();
 				u.Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 			end
@@ -947,7 +945,7 @@ function LS.ToggleTab(tab, minitab)
 		LoadSaveButton:SetNormalFontObject(_G["legendaryFontButtonNormal"])
 	end
 	if tab == 99 then
-		for j,u in ipairs(LS.SettingsFrameTabCommands.MiniTabs) do 
+		for j,u in ipairs(LS.SettingsFrameTabCommands.MiniTabs) do
 			if j == minitab then
 				u.Body:Show();
 				u.Button:SetNormalFontObject(_G["legendaryFontButtonSelectedS"])
@@ -959,7 +957,7 @@ function LS.ToggleTab(tab, minitab)
 		LS.SettingsFrameTabCommands.CategoriesBody:Show();
 		CommandsButton:SetNormalFontObject(_G["legendaryFontButtonSelected"])
 	else
-		for j,u in ipairs(LS.SettingsFrameTabCommands.MiniTabs) do 
+		for j,u in ipairs(LS.SettingsFrameTabCommands.MiniTabs) do
 			u.Body:Hide();
 			u.Button:SetNormalFontObject(_G["legendaryFontButtonNormalS"])
 		end
@@ -972,9 +970,9 @@ end
 
 function LS.MinimizeDropdowns(dropdownName)
 	--Close Dropdowns
-	for i,v in pairs(LS.Tabs) do 
-		for _,m in pairs(v.MiniTabs) do 
-			for _,l in pairs(m.Lines) do 
+	for i,v in pairs(LS.Tabs) do
+		for _,m in pairs(v.MiniTabs) do
+			for _,l in pairs(m.Lines) do
 				for k,u in pairs(l.Controls) do
 					local controlName = u:GetName()
 					if controlName ~= dropdownName then
@@ -1026,7 +1024,7 @@ end
 
 function LS.CreateDropdownControl(name, parent, positionX, positionY, width, height, default, optionsTable)
 	local optionHeight = 15;
-	
+
 	local f = CreateFrame("Button", "DROPDOWN"..name, parent, "UIPanelButtonTemplate")
 	f:SetNormalFontObject(_G["legendaryFontNormal"])
 	f:SetHighlightFontObject(_G["legendaryFontNormalAccent"])
@@ -1036,7 +1034,7 @@ function LS.CreateDropdownControl(name, parent, positionX, positionY, width, hei
 
 	f.options = optionsTable
 	f.optionControls = {}
-	
+
 	--Create Buttons For Options
 	for i=1,#f.options do
 		f.optionControls[i] = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
@@ -1045,7 +1043,7 @@ function LS.CreateDropdownControl(name, parent, positionX, positionY, width, hei
 		f.optionControls[i]:SetText(f.options[i])
 		f.optionControls[i]:SetSize(width, optionHeight)
 		f.optionControls[i]:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -optionHeight*(i-1))
-		
+
 		f.optionControls[i]:SetScript("OnClick", function(self, button, down)
 			f:SetText(f.options[i])
 			LS.Settings[name] = f.options[i]
@@ -1056,7 +1054,7 @@ function LS.CreateDropdownControl(name, parent, positionX, positionY, width, hei
 
 		f.optionControls[i]:Hide()
 	end
-	
+
 	f:SetScript("OnClick", function(self, button, down)
 		for k, v in pairs(f.optionControls) do
 			if v:IsVisible() then
@@ -1067,7 +1065,7 @@ function LS.CreateDropdownControl(name, parent, positionX, positionY, width, hei
 		end
 		LS.MinimizeDropdowns(f:GetName())
 	end)
-	
+
 	return f;
 end
 
@@ -1088,7 +1086,7 @@ function LS.AddDropdown(tab, minitab, line, variable, label, default, ...)
 	local frame=CreateFrame("Frame","DropdownLabel"..variable,LS.Tabs[tab].MiniTabs[minitab].Body);
 	frame:SetPoint("BOTTOM", LS.Tabs[tab].MiniTabs[minitab].Body, "TOPLEFT", 80 + LS.Tabs[tab].MiniTabs[minitab].Lines[line].NextOffset, -LS.SettingControlHeight - LS.SpacingBetweenLines*line)
 	frame:SetSize(100,LS.SettingControlHeight);
- 
+
 	local text=frame:CreateFontString(nil,"OVERLAY","GameFontNormal");
 	text:SetPoint("CENTER");
 	text:SetText(label);
@@ -1119,7 +1117,7 @@ function LS.AddDropdown(tab, minitab, line, variable, label, default, ...)
 	--/run print(select(1, _G[_G["DROPDOWNSomeDropdown"]:GetChildren():GetName()]:GetRegions()):GetName()) 4
 
 	--_G[dropDown:GetName() .. 'Button']:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\dropdownbutton")
-	--for i,v in ipairs(_G[dropDown:GetName()]) do 
+	--for i,v in ipairs(_G[dropDown:GetName()]) do
 	--	print(i)
 	--end
 
@@ -1472,7 +1470,7 @@ function LS.AddSlider(tab, minitab, line, variable, label, min, max, default)
 	--local frame=CreateFrame("Frame","SliderLabel"..variable,LS.Tabs[tab].Body);
 	--frame:SetPoint("TOPLEFT", LS.Tabs[tab].Body, "TOPLEFT", 10 + LS.Tabs[tab].Lines[line].NextOffset, -10 - LS.SpacingBetweenLines*line)
 	--frame:SetSize(7*#label,LS.SettingControlHeight);
- 
+
 	--local text=frame:CreateFontString(nil,"OVERLAY","GameFontNormal");
 	--text:SetPoint("TOPLEFT");
 	--text:SetText(label);
@@ -1728,7 +1726,7 @@ function HandleCutsceneEvent(self, event)
 		-- Save the visibility state
 		wasSettingsFrameVisible = SettingsFrame:IsVisible()
 		wasFrameTogglesVisible = FrameToggles:IsVisible()
-		
+
 		-- Hide the frames when the cinematic starts
 		if wasSettingsFrameVisible then
 			SettingsFrame:Hide()
@@ -1791,7 +1789,7 @@ function LoadSaveButton_OnClick()
 	--else
 	--	LS.SettingsFrameTabProfiles.Body:Hide();
 	--end
-	--for i,v in ipairs(LS.Tabs) do 
+	--for i,v in ipairs(LS.Tabs) do
 	--	v.Body:Hide();
 	--end
 	LS.ToggleTab(0, 0)
