@@ -157,7 +157,7 @@ local function HandleCommands(msg, editbox)
             LS.Toggles[string.lower(msg)] = false
             print(string.lower(msg)..' Off')
             LS.Buttons[string.lower(msg)]:SetNormalFontObject(_G["legendaryFontButtonSelected"])
-            LS.Buttons[string.lower(variable)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
+            LS.Buttons[string.lower(msg)]:SetNormalTexture("Interface\\Addons\\LegendarySettings\\Vectors\\BigButtonNotHighlighted")
             RaidNotice_AddMessage(RaidWarningFrame, string.lower(msg)..' Off', ChatTypeInfo["RAID_WARNING"])
         else
             LS.Toggles[string.lower(msg)] = true
