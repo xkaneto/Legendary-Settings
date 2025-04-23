@@ -1,9 +1,7 @@
--- Author      : kaneto
--- Create Date : 9/7/2024
+
 -- TODO Restrict/Delay reloading only to out of combat
 -- TODO Message if spec doesn't match with the settings
 -- TODO Add a label inside the profiles' "You can have up to 6 profiles"
--- TODO Add Header and Tail frames (dark)
 -- TODO Function to clear/remove the initializedButtons
 -- TODO Change line numbers to start at one instead of 0
 -- TODO Add title based on loaded SpecID
@@ -12,6 +10,7 @@
 -- TODO Save last selected minitab
 -- TODO Mouseover Tooltip for explaining the settings
 -- TODO Move Profile related functions outside of this lua file
+
 local name, LS = ...
 
 LegendarySettings = LS;
