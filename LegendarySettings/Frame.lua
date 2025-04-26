@@ -1,16 +1,4 @@
-
--- TODO Restrict/Delay reloading only to out of combat
--- TODO Message if spec doesn't match with the settings
--- TODO Add a label inside the profiles' "You can have up to 6 profiles"
--- TODO Function to clear/remove the initializedButtons
--- TODO Change line numbers to start at one instead of 0
--- TODO Add title based on loaded SpecID
--- TODO Fix profile Ids and sorting in order
--- TODO Change buttons' texture when selected in profiles
--- TODO Save last selected minitab
--- TODO Mouseover Tooltip for explaining the settings
--- TODO Move Profile related functions outside of this lua file
-
+-- This file is part of LegendarySettings, a World of Warcraft addon.
 local name, LS = ...
 
 LegendarySettings = LS;
@@ -340,6 +328,9 @@ function LS.InitTabs(...)
     -- Hardcode last tab as Pots
     arg[#arg + 1] = "Potions"
 
+    -- Hardcode last tab as CPU
+    arg[#arg + 1] = "CPU"
+
     -- Set the Tabs' Frame backdrop
     local topWindowBackdrop = {
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
@@ -427,34 +418,41 @@ function LS.InitTabs(...)
     SettingsFrameTabProfiles:Hide();
 
     -- Hardcode minitabs for trinkets
-    LS.InitMiniTabs(#arg - 1, "Top", "Bottom")
+    LS.InitMiniTabs(#arg - 2, "Top", "Bottom")
 
     -- Hardcode trinket settings
-    LS.AddDropdown(#arg - 1, 1, 0, "TopTrinketCondition", "Top Trinket Usage", "Rotation Helper", "At HP",
+    LS.AddDropdown(#arg - 2, 1, 0, "TopTrinketCondition", "Top Trinket Usage", "Rotation Helper", "At HP",
         "Rotation Helper", "On Cooldown", "Don't Use");
-    LS.AddDropdown(#arg - 1, 1, 0, "TopTrinketTarget", "Top Trinket Target", "Enemy", "Enemy", "Player", "Cursor",
+    LS.AddDropdown(#arg - 2, 1, 0, "TopTrinketTarget", "Top Trinket Target", "Enemy", "Enemy", "Player", "Cursor",
         "Friendly");
-    LS.AddDropdown(#arg - 1, 1, 1, "TopTrinketCursor", "Top Trinket Cursor Settings", "Enemy Under Cursor",
+    LS.AddDropdown(#arg - 2, 1, 1, "TopTrinketCursor", "Top Trinket Cursor Settings", "Enemy Under Cursor",
         "Confirmation", "Cursor", "Enemy Under Cursor");
-    LS.AddSlider(#arg - 1, 1, 1, "TopTrinketHP", "Top Trinket @ HP", 0, 100, 80);
+    LS.AddSlider(#arg - 2, 1, 1, "TopTrinketHP", "Top Trinket @ HP", 0, 100, 80);
 
-    LS.AddDropdown(#arg - 1, 2, 0, "BottomTrinketCondition", "Bottom Trinket Usage", "Rotation Helper", "At HP",
+    LS.AddDropdown(#arg - 2, 2, 0, "BottomTrinketCondition", "Bottom Trinket Usage", "Rotation Helper", "At HP",
         "Rotation Helper", "On Cooldown", "Don't Use");
-    LS.AddDropdown(#arg - 1, 2, 0, "BottomTrinketTarget", "Bottom Trinket Target", "Enemy", "Enemy", "Player", "Cursor",
+    LS.AddDropdown(#arg - 2, 2, 0, "BottomTrinketTarget", "Bottom Trinket Target", "Enemy", "Enemy", "Player", "Cursor",
         "Friendly");
-    LS.AddDropdown(#arg - 1, 2, 1, "BottomTrinketCursor", "Bottom Trinket Cursor Settings", "Enemy Under Cursor",
+    LS.AddDropdown(#arg - 2, 2, 1, "BottomTrinketCursor", "Bottom Trinket Cursor Settings", "Enemy Under Cursor",
         "Confirmation", "Cursor", "Enemy Under Cursor");
-    LS.AddSlider(#arg - 1, 2, 1, "BottomTrinketHP", "Bottom Trinket @ HP", 0, 100, 80);
+    LS.AddSlider(#arg - 2, 2, 1, "BottomTrinketHP", "Bottom Trinket @ HP", 0, 100, 80);
 
     -- Hardcode minitabs for Pots
-    LS.InitMiniTabs(#arg, "DPS Potions")
+    LS.InitMiniTabs(#arg - 1, "DPS Potions")
 
     -- Hardcode pot settings
-    LS.AddDropdown(#arg, 1, 0, "DPSPotionUsage", "DPS Potion With", "Bloodlust+Cooldowns", "Cooldowns", "Bloodlust",
+    LS.AddDropdown(#arg - 1, 1, 0, "DPSPotionUsage", "DPS Potion With", "Bloodlust+Cooldowns", "Cooldowns", "Bloodlust",
         "Bloodlust+Cooldowns", "On Cooldown", "Don't Use");
-    LS.AddDropdown(#arg, 1, 1, "DPSPotionName", "DPS Potion Name", "Tempered Potion", "Tempered Potion",
+    LS.AddDropdown(#arg - 1, 1, 1, "DPSPotionName", "DPS Potion Name", "Tempered Potion", "Tempered Potion",
         "Potion of Unwavering Focus", "Frontline Potion", "Fleeting Tempered Potion",
         "Fleeting Potion of Unwavering Focus", "Fleeting Frontline Potion");
+
+    -- Hardcode minitabs for CPU Stuff
+    LS.InitMiniTabs(#arg, "CPU Settings");
+
+    -- Hardcode CPU and Spell Slider settings
+    LS.AddSlider(#arg, 1, 0, "spellQueueSlider", "# ms to rec Spells", 1, 2000, 400);
+    LS.AddSlider(#arg, 1, 0, "cpuSlider", "Reduce CPU load by # ms", 1, 1000, 200);
 end
 
 function LS.InitMiniTabs(tab, ...)
