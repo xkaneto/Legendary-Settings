@@ -1,6 +1,6 @@
 ## Title: LegendarySettings
 ## Version: 1.0
-## Interface: 110105
+## Interface: 110107
 
 ## DefaultState: Enabled
 
