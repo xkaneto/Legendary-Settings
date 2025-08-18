@@ -585,13 +585,13 @@ function LS.InitProfilesTab()
  		insets = { left = 1, right = 1, top = 1, bottom = 1 },
 	}
 
-	LS.SettingsFrameTabProfiles.CategoriesBody = CreateFrame("Frame", "SettingsFrameTabProfiles", SettingsFrame, "BackdropTemplate")
+	LS.SettingsFrameTabProfiles.CategoriesBody = CreateFrame("Frame", "SettingsFrameTabProfilesCategories", SettingsFrame, "BackdropTemplate")
 	LS.SettingsFrameTabProfiles.CategoriesBody:SetPoint("TOPRIGHT", SettingsFrame, "TOPRIGHT", -10, -10)
 	LS.SettingsFrameTabProfiles.CategoriesBody:SetSize(LS.TabBodySizeX, LS.TabBodyCategoriesSizeY)
 	LS.SettingsFrameTabProfiles.CategoriesBody:Hide();
 	LS.SettingsFrameTabProfiles.CategoriesBody:SetBackdrop(backdropInfo)
 
-	LS.SettingsFrameTabProfiles.Body = CreateFrame("Frame", "SettingsFrameTabProfiles", SettingsFrame, "BackdropTemplate")
+	LS.SettingsFrameTabProfiles.Body = CreateFrame("Frame", "SettingsFrameTabProfilesBody", SettingsFrame, "BackdropTemplate")
 	LS.SettingsFrameTabProfiles.Body:SetPoint("BOTTOMRIGHT", SettingsFrame, "BOTTOMRIGHT", -10, 10)
 	LS.SettingsFrameTabProfiles.Body:SetSize(LS.TabBodySizeX, LS.TabBodySizeY)
 	LS.SettingsFrameTabProfiles.Body:Hide();
