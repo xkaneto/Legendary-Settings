@@ -632,6 +632,12 @@ local function serializeTable(val, name, depth)
     return tmp
 end
 
+-- helpers for StaticPopup edit box compatibility
+local function GetPopupEditBox(self)
+    return self.EditBox or self.editBox
+end
+
+
 function LS.CreateImportPopup()
     StaticPopupDialogs["IMPORT_SETTINGS"] = {
         text = "Paste the settings string here:",
@@ -657,23 +663,20 @@ function LS.CreateImportPopup()
             end
 
             -- Settings import box
-            self.editBox:SetMultiLine(true)
-            self.editBox:SetSize(300, 100) -- Start with a reasonable size
-            self.editBox:SetPoint("TOP", self, "TOP", 0, -70)
-
-            -- Adjust height dynamically
-            local function AdjustEditBoxHeight(editBox)
-                local numLines = select(2, editBox:GetText():gsub("\n", "\n")) + 1
-                local newHeight = math.min(600, math.max(100, numLines * 15))
-                editBox:SetHeight(newHeight)
-            end
-            self.editBox:SetScript("OnTextChanged", function(self)
-                AdjustEditBoxHeight(self)
-            end)
+            local eb = GetPopupEditBox(self)
+			if not eb then return end
+			eb:SetMultiLine(true)
+			eb:SetSize(300, 100)
+			eb:SetPoint("TOP", self, "TOP", 0, -70)
+			eb:SetScript("OnTextChanged", function(box)
+				local numLines = select(2, box:GetText():gsub("\n", "\n")) + 1
+				box:SetHeight(math.min(600, math.max(100, numLines * 15)))
+			end)
         end,
 
         OnAccept = function(self)
-            local serializedProfile = self.editBox:GetText()
+            local eb = GetPopupEditBox(self)
+            local serializedProfile = eb and eb:GetText() or ""
             local profileName = self.profileNameEditBox:GetText()
             if profileName and profileName ~= "" and profileName ~= "Enter Profile Name" then
                 LS.ImportSettings(serializedProfile, profileName)
@@ -703,23 +706,19 @@ function LS.ShowExportPopup(serializedProfile)
         preferredIndex = 3,
 
         OnShow = function(self)
-            -- Make sure profile input box does not exist in export
-            if self.profileNameEditBox then
-                self.profileNameEditBox:Hide()
-            end
-
-            -- Ensure settings text is displayed correctly
-            self.editBox:SetMultiLine(true)
-            self.editBox:SetSize(300, 400) -- Export box should be large enough
-            self.editBox:SetText(serializedProfile)
-            self.editBox:HighlightText()
-            self.editBox:SetFocus()
-        end,
-
-        OnAccept = function(self)
-            self.editBox:HighlightText()
-            self.editBox:SetFocus()
-        end,
+			if self.profileNameEditBox then self.profileNameEditBox:Hide() end
+			local eb = GetPopupEditBox(self)
+			if not eb then return end
+			eb:SetMultiLine(true)
+			eb:SetSize(300, 400)
+			eb:SetText(serializedProfile)
+			eb:HighlightText()
+			eb:SetFocus()
+		end,
+		OnAccept = function(self)
+			local eb = GetPopupEditBox(self)
+			if eb then eb:HighlightText(); eb:SetFocus() end
+		end,
 
         EditBoxOnEscapePressed = function(self)
             self:GetParent():Hide()
