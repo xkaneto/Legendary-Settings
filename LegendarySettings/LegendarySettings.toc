@@ -1,7 +1,6 @@
 ## Title: LegendarySettings
 ## Version: 1.0
-## Author: xkaneto
-## Interface: 110005
+## Interface: 110107
 
 ## DefaultState: Enabled
 

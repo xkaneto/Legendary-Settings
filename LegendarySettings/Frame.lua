@@ -671,7 +671,7 @@ function LS.CreateImportPopup()
 			eb:SetScript("OnTextChanged", function(box)
 				local numLines = select(2, box:GetText():gsub("\n", "\n")) + 1
 				box:SetHeight(math.min(600, math.max(100, numLines * 15)))
-			end)
+            end)
         end,
 
         OnAccept = function(self)
@@ -714,11 +714,11 @@ function LS.ShowExportPopup(serializedProfile)
 			eb:SetText(serializedProfile)
 			eb:HighlightText()
 			eb:SetFocus()
-		end,
-		OnAccept = function(self)
+        end,
+        OnAccept = function(self)
 			local eb = GetPopupEditBox(self)
 			if eb then eb:HighlightText(); eb:SetFocus() end
-		end,
+        end,
 
         EditBoxOnEscapePressed = function(self)
             self:GetParent():Hide()
@@ -755,16 +755,16 @@ function LS.InitProfilesTab()
     }
 
 	LS.SettingsFrameTabProfiles.CategoriesBody = CreateFrame("Frame", "SettingsFrameTabProfilesCategories", SettingsFrame, "BackdropTemplate")
-	LS.SettingsFrameTabProfiles.CategoriesBody:SetPoint("TOPRIGHT", SettingsFrame, "TOPRIGHT", -10, -10)
-	LS.SettingsFrameTabProfiles.CategoriesBody:SetSize(LS.TabBodySizeX, LS.TabBodyCategoriesSizeY)
-	LS.SettingsFrameTabProfiles.CategoriesBody:Hide();
-	LS.SettingsFrameTabProfiles.CategoriesBody:SetBackdrop(backdropInfo)
+    LS.SettingsFrameTabProfiles.CategoriesBody:SetPoint("TOPRIGHT", SettingsFrame, "TOPRIGHT", -10, -10)
+    LS.SettingsFrameTabProfiles.CategoriesBody:SetSize(LS.TabBodySizeX, LS.TabBodyCategoriesSizeY)
+    LS.SettingsFrameTabProfiles.CategoriesBody:Hide();
+    LS.SettingsFrameTabProfiles.CategoriesBody:SetBackdrop(backdropInfo)
 
 	LS.SettingsFrameTabProfiles.Body = CreateFrame("Frame", "SettingsFrameTabProfilesBody", SettingsFrame, "BackdropTemplate")
-	LS.SettingsFrameTabProfiles.Body:SetPoint("BOTTOMRIGHT", SettingsFrame, "BOTTOMRIGHT", -10, 10)
-	LS.SettingsFrameTabProfiles.Body:SetSize(LS.TabBodySizeX, LS.TabBodySizeY)
-	LS.SettingsFrameTabProfiles.Body:Hide();
-	LS.SettingsFrameTabProfiles.Body:SetBackdrop(backdropInfo)
+    LS.SettingsFrameTabProfiles.Body:SetPoint("BOTTOMRIGHT", SettingsFrame, "BOTTOMRIGHT", -10, 10)
+    LS.SettingsFrameTabProfiles.Body:SetSize(LS.TabBodySizeX, LS.TabBodySizeY)
+    LS.SettingsFrameTabProfiles.Body:Hide();
+    LS.SettingsFrameTabProfiles.Body:SetBackdrop(backdropInfo)
 
     LS.SettingsFrameTabCommands.CategoriesBody = CreateFrame("Frame", "SettingsFrameTabCommandsCategories",
         SettingsFrame, "BackdropTemplate")
