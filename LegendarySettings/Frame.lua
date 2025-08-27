@@ -209,10 +209,10 @@ function frame:OnEvent(event, arg1)
             LS.UnlockToggleBar()
         end
     elseif event == "PLAYER_LOGIN" then
-        local SpecIndex = GetSpecialization()
-        local Spec, _ = GetSpecializationInfo(SpecIndex)
-        LS.SpecID = Spec
+        -- use per-class+spec key to ensure unique storage per specialization
+        LS.SpecID = GetSpecKey()
 
+        -- ensure DB for this spec-key exists
         if LegendarySettingsDB[LS.SpecID] == nil then
             LegendarySettingsDB[LS.SpecID] = {}
             LegendarySettingsDB[LS.SpecID].Profiles = {}
@@ -228,7 +228,6 @@ function frame:OnEvent(event, arg1)
         end
 
         LS.InitMiniMapButton()
-        -- LS.InitMiniButtons()
         LS.InitProfilesTab()
         LS.UpdateExistingControls()
 
@@ -603,33 +602,63 @@ function LS.InitMiniMapButton()
     end)
 end
 
--- Function to serialize a table
+-- Helper: return a stable spec key for saving settings per-class+specialization
+function GetSpecKey()
+    local _, classFile = UnitClass("player") or "Unknown", "UNKNOWN"
+    local specIndex = GetSpecialization() or 0
+    local specName = ""
+    if specIndex > 0 then
+        specName = select(1, GetSpecializationInfo(specIndex)) or ""
+    end
+    -- Key format: CLASS_specIndex_specName (keeps unique per-class+spec)
+    return string.format("%s_%d_%s", classFile or "UNKNOWN", specIndex, specName or "")
+end
+
+-- Function to serialize a table (sorted keys for deterministic output)
 local function serializeTable(val, name, depth)
-    local tmp = string.rep(" ", depth)
+    local indent = string.rep(" ", depth or 0)
+    local out = ""
 
     if type(name) == "string" then
-        tmp = tmp .. string.format("[%q] = ", name)
+        out = out .. indent .. string.format("[%q] = ", name)
     elseif type(name) == "number" then
-        tmp = tmp .. "[" .. name .. "] = "
+        out = out .. indent .. "[" .. name .. "] = "
+    else
+        out = out .. indent
     end
 
     if type(val) == "table" then
-        tmp = tmp .. "{\n"
-        for k, v in pairs(val) do
-            tmp = tmp .. serializeTable(v, k, depth + 4) .. ",\n"
+        out = out .. "{\n"
+        -- collect keys and sort them (numbers first in numeric order, then strings alphabetical)
+        local keys = {}
+        for k in pairs(val) do table.insert(keys, k) end
+        table.sort(keys, function(a, b)
+            local ta, tb = type(a), type(b)
+            if ta == tb then
+                if ta == "number" then return a < b end
+                return tostring(a) < tostring(b)
+            end
+            -- put numbers before strings
+            if ta == "number" then return true end
+            if tb == "number" then return false end
+            return tostring(a) < tostring(b)
+        end)
+
+        for _, k in ipairs(keys) do
+            out = out .. serializeTable(val[k], k, (depth or 0) + 4) .. ",\n"
         end
-        tmp = tmp .. string.rep(" ", depth) .. "}"
+        out = out .. string.rep(" ", depth or 0) .. "}"
     elseif type(val) == "number" then
-        tmp = tmp .. tostring(val)
+        out = out .. tostring(val)
     elseif type(val) == "string" then
-        tmp = tmp .. string.format("%q", val)
+        out = out .. string.format("%q", val)
     elseif type(val) == "boolean" then
-        tmp = tmp .. (val and "true" or "false")
+        out = out .. (val and "true" or "false")
     else
-        tmp = tmp .. "\"[inserializeable datatype:" .. type(val) .. "]\""
+        out = out .. "\"[inserializeable datatype:" .. type(val) .. "]\""
     end
 
-    return tmp
+    return out
 end
 
 -- helpers for StaticPopup edit box compatibility
@@ -699,6 +728,7 @@ function LS.ShowExportPopup(serializedProfile)
         button1 = "Highlight text",
         button2 = "Cancel",
         hasEditBox = true,
+        maxLetters = 50000,
         timeout = 0,
         whileDead = true,
         hideOnEscape = true,
@@ -711,34 +741,44 @@ function LS.ShowExportPopup(serializedProfile)
                 builtin:Hide()
             end
 
-            -- if we've already created our scroll+edit for this popup, reuse it
+            -- create scroll+edit only once
             if not self.LS_ExportScroll then
-                local width = 300
                 local linesToShow = 15
-                local lineHeight = 15 -- approx line height for the font
+                local lineHeight = 16 -- line height for the font
                 local height = linesToShow * lineHeight
+
+                -- calculate usable width inside popup (fallback if width not available yet)
+                local popupW = self:GetWidth() or 340
+                local padding = 20
+                local scrollW = math.max(220, popupW - padding * 2)
 
                 -- Create scroll frame (uses Blizzard scroll template so a scrollbar appears)
                 local scroll = CreateFrame("ScrollFrame", nil, self, "UIPanelScrollFrameTemplate")
-                scroll:SetPoint("TOP", self, "TOP", 0, -70)
-                scroll:SetSize(width, height)
+                scroll:SetPoint("TOPLEFT", self, "TOPLEFT", padding, -70)
+                scroll:SetSize(scrollW, height)
 
-                -- Create multiline EditBox as the scroll child
+                -- Create multiline EditBox as the scroll child and anchor it to scroll so it never overflows popup
                 local edit = CreateFrame("EditBox", nil, scroll)
                 edit:SetMultiLine(true)
                 edit:SetAutoFocus(false)
                 edit:SetFontObject(GameFontNormalSmall)
-                edit:SetWidth(width - 8)
                 edit:SetJustifyH("LEFT")
-                edit:SetScript("OnEscapePressed", function() self:Hide() end)
+                -- leave room for the scrollbar (approx 20-24px)
+                edit:SetWidth(scrollW - 24)
+                edit:SetHeight(height)
+                edit:SetScript("OnEscapePressed", function() StaticPopup_Hide("EXPORT_SETTINGS") end)
                 edit:SetScript("OnMouseWheel", function(_, delta)
                     local v = scroll:GetVerticalScroll()
                     scroll:SetVerticalScroll(math.max(0, v - delta * lineHeight * 3))
                 end)
 
+                -- ensure proper anchoring inside the scrollframe
+                edit:SetPoint("TOPLEFT", scroll, "TOPLEFT", 4, 0)
+                edit:SetPoint("BOTTOMRIGHT", scroll, "BOTTOMRIGHT", -4, 0)
+
                 scroll:SetScrollChild(edit)
 
-                -- store references so we can reuse them
+                -- store refs
                 self.LS_ExportScroll = scroll
                 self.LS_ExportEdit = edit
             end
@@ -749,6 +789,8 @@ function LS.ShowExportPopup(serializedProfile)
             eb:SetText(serializedProfile)
             eb:HighlightText()
             eb:SetFocus()
+            -- reset scroll to top
+            if self.LS_ExportScroll then self.LS_ExportScroll:SetVerticalScroll(0) end
         end,
 
         OnAccept = function(self)
