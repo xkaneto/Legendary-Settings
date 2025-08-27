@@ -699,29 +699,69 @@ function LS.ShowExportPopup(serializedProfile)
         button1 = "Highlight text",
         button2 = "Cancel",
         hasEditBox = true,
-        maxLetters = 50000,
         timeout = 0,
         whileDead = true,
         hideOnEscape = true,
         preferredIndex = 3,
 
         OnShow = function(self)
-			if self.profileNameEditBox then self.profileNameEditBox:Hide() end
-			local eb = GetPopupEditBox(self)
-			if not eb then return end
-			eb:SetMultiLine(true)
-			eb:SetSize(300, 400)
-			eb:SetText(serializedProfile)
-			eb:HighlightText()
-			eb:SetFocus()
+            -- hide builtin StaticPopup editbox (we'll create/use a scrollable one)
+            local builtin = GetPopupEditBox(self)
+            if builtin then
+                builtin:Hide()
+            end
+
+            -- if we've already created our scroll+edit for this popup, reuse it
+            if not self.LS_ExportScroll then
+                local width = 300
+                local linesToShow = 15
+                local lineHeight = 15 -- approx line height for the font
+                local height = linesToShow * lineHeight
+
+                -- Create scroll frame (uses Blizzard scroll template so a scrollbar appears)
+                local scroll = CreateFrame("ScrollFrame", nil, self, "UIPanelScrollFrameTemplate")
+                scroll:SetPoint("TOP", self, "TOP", 0, -70)
+                scroll:SetSize(width, height)
+
+                -- Create multiline EditBox as the scroll child
+                local edit = CreateFrame("EditBox", nil, scroll)
+                edit:SetMultiLine(true)
+                edit:SetAutoFocus(false)
+                edit:SetFontObject(GameFontNormalSmall)
+                edit:SetWidth(width - 8)
+                edit:SetJustifyH("LEFT")
+                edit:SetScript("OnEscapePressed", function() self:Hide() end)
+                edit:SetScript("OnMouseWheel", function(_, delta)
+                    local v = scroll:GetVerticalScroll()
+                    scroll:SetVerticalScroll(math.max(0, v - delta * lineHeight * 3))
+                end)
+
+                scroll:SetScrollChild(edit)
+
+                -- store references so we can reuse them
+                self.LS_ExportScroll = scroll
+                self.LS_ExportEdit = edit
+            end
+
+            -- populate and show our edit box
+            local eb = self.LS_ExportEdit
+            if not eb then return end
+            eb:SetText(serializedProfile)
+            eb:HighlightText()
+            eb:SetFocus()
         end,
+
         OnAccept = function(self)
-			local eb = GetPopupEditBox(self)
-			if eb then eb:HighlightText(); eb:SetFocus() end
+            if self.LS_ExportEdit then
+                self.LS_ExportEdit:HighlightText()
+                self.LS_ExportEdit:SetFocus()
+            end
         end,
 
         EditBoxOnEscapePressed = function(self)
-            self:GetParent():Hide()
+            -- support both builtin and our custom editbox escape behaviour
+            local parent = self:GetParent()
+            if parent and parent.Hide then parent:Hide() end
         end
     }
 
