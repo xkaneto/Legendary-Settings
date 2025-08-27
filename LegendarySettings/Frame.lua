@@ -725,9 +725,9 @@ end
 function LS.ShowExportPopup(serializedProfile)
     StaticPopupDialogs["EXPORT_SETTINGS"] = {
         text = "Copy the exported settings from the box below:",
-        button1 = "Highlight text",
-        button2 = "Cancel",
-        hasEditBox = true,
+        -- Remove builtin buttons so they don't overlap with our custom top buttons
+        -- (do not provide button1/button2 here)
+        hasEditBox = false,
         maxLetters = 50000,
         timeout = 0,
         whileDead = true,
@@ -735,52 +735,118 @@ function LS.ShowExportPopup(serializedProfile)
         preferredIndex = 3,
 
         OnShow = function(self)
-            -- hide builtin StaticPopup editbox (we'll create/use a scrollable one)
+            -- Force popup to a stable size so it won't grow each time it's opened
+            local FIXED_W, FIXED_H = 520, 380
+            self:SetSize(FIXED_W, FIXED_H)
+
+            -- hide builtin StaticPopup editbox/buttons if present
             local builtin = GetPopupEditBox(self)
-            if builtin then
-                builtin:Hide()
+            if builtin then builtin:Hide() end
+            if self.button1 then self.button1:Hide() end
+            if self.button2 then self.button2:Hide() end
+
+            -- layout metrics
+            local linesToShow = 15
+            local lineHeight = 16
+            local maxLinesHeight = linesToShow * lineHeight
+
+            local popupW = FIXED_W
+            local popupH = FIXED_H
+
+            local padding = 16
+            local topTitleOffset = 28 -- space for title text
+            local topButtonsHeight = 26
+            local topButtonsSpacing = 8
+            local reservedBottom = 12 -- spacing from bottom
+
+            -- create top-area buttons (only once)
+            if not self.LS_TopButtons then
+                local topFrame = CreateFrame("Frame", nil, self)
+                topFrame:SetPoint("TOPLEFT", self, "TOPLEFT", padding, -topTitleOffset)
+                topFrame:SetPoint("TOPRIGHT", self, "TOPRIGHT", -padding, -topTitleOffset)
+                topFrame:SetHeight(topButtonsHeight)
+                self.LS_TopButtons = topFrame
+
+                local btnW = 120
+                local btnH = topButtonsHeight
+
+                local btnHighlight = CreateFrame("Button", nil, topFrame, "UIPanelButtonTemplate")
+                btnHighlight:SetSize(btnW, btnH)
+                btnHighlight:SetPoint("LEFT", topFrame, "LEFT", 0, 0)
+                btnHighlight:SetText("Highlight text")
+                btnHighlight:SetScript("OnClick", function()
+                    if self.LS_ExportEdit then
+                        self.LS_ExportEdit:HighlightText()
+                        self.LS_ExportEdit:SetFocus()
+                    end
+                end)
+                self.LS_Highlight = btnHighlight
+
+                local btnCancel = CreateFrame("Button", nil, topFrame, "UIPanelButtonTemplate")
+                btnCancel:SetSize(btnW, btnH)
+                btnCancel:SetPoint("LEFT", btnHighlight, "RIGHT", topButtonsSpacing, 0)
+                btnCancel:SetText("Cancel")
+                btnCancel:SetScript("OnClick", function()
+                    StaticPopup_Hide("EXPORT_SETTINGS")
+                end)
+                self.LS_Cancel = btnCancel
+
+                local btnCopy = CreateFrame("Button", nil, topFrame, "UIPanelButtonTemplate")
+                btnCopy:SetSize(80, btnH)
+                btnCopy:SetPoint("RIGHT", topFrame, "RIGHT", 0, 0)
+                btnCopy:SetText("Copy All")
+                btnCopy:SetScript("OnClick", function()
+                    if self.LS_ExportEdit then
+                        self.LS_ExportEdit:HighlightText()
+                        self.LS_ExportEdit:SetFocus()
+                    end
+                end)
+                self.LS_Copy = btnCopy
             end
+
+            -- compute scroll area below the top buttons
+            local topOffset = topTitleOffset + topButtonsHeight + 8
+            local availableHeight = math.max(80, popupH - topOffset - reservedBottom)
+            local height = math.min(maxLinesHeight, availableHeight)
+            local scrollW = math.max(240, popupW - padding * 2)
 
             -- create scroll+edit only once
             if not self.LS_ExportScroll then
-                local linesToShow = 15
-                local lineHeight = 16 -- line height for the font
-                local height = linesToShow * lineHeight
-
-                -- calculate usable width inside popup (fallback if width not available yet)
-                local popupW = self:GetWidth() or 340
-                local padding = 20
-                local scrollW = math.max(220, popupW - padding * 2)
-
-                -- Create scroll frame (uses Blizzard scroll template so a scrollbar appears)
                 local scroll = CreateFrame("ScrollFrame", nil, self, "UIPanelScrollFrameTemplate")
-                scroll:SetPoint("TOPLEFT", self, "TOPLEFT", padding, -70)
+                scroll:SetPoint("TOPLEFT", self, "TOPLEFT", padding, -topOffset)
                 scroll:SetSize(scrollW, height)
 
-                -- Create multiline EditBox as the scroll child and anchor it to scroll so it never overflows popup
                 local edit = CreateFrame("EditBox", nil, scroll)
                 edit:SetMultiLine(true)
                 edit:SetAutoFocus(false)
                 edit:SetFontObject(GameFontNormalSmall)
                 edit:SetJustifyH("LEFT")
-                -- leave room for the scrollbar (approx 20-24px)
-                edit:SetWidth(scrollW - 24)
+                edit:SetWidth(scrollW - 28) -- leave space for scrollbar
                 edit:SetHeight(height)
-                edit:SetScript("OnEscapePressed", function() StaticPopup_Hide("EXPORT_SETTINGS") end)
+                edit:SetScript("OnEscapePressed", function()
+                    StaticPopup_Hide("EXPORT_SETTINGS")
+                end)
                 edit:SetScript("OnMouseWheel", function(_, delta)
                     local v = scroll:GetVerticalScroll()
                     scroll:SetVerticalScroll(math.max(0, v - delta * lineHeight * 3))
                 end)
 
-                -- ensure proper anchoring inside the scrollframe
+                -- anchor edit to scroll child area so scrollbar sits at the far right of the scroll frame
                 edit:SetPoint("TOPLEFT", scroll, "TOPLEFT", 4, 0)
                 edit:SetPoint("BOTTOMRIGHT", scroll, "BOTTOMRIGHT", -4, 0)
 
                 scroll:SetScrollChild(edit)
 
-                -- store refs
                 self.LS_ExportScroll = scroll
                 self.LS_ExportEdit = edit
+            else
+                -- update position/size when popup resizes (we keep fixed size though)
+                self.LS_ExportScroll:SetPoint("TOPLEFT", self, "TOPLEFT", padding, -topOffset)
+                self.LS_ExportScroll:SetSize(scrollW, height)
+                if self.LS_ExportEdit then
+                    self.LS_ExportEdit:SetWidth(scrollW - 28)
+                    self.LS_ExportEdit:SetHeight(height)
+                end
             end
 
             -- populate and show our edit box
@@ -789,7 +855,6 @@ function LS.ShowExportPopup(serializedProfile)
             eb:SetText(serializedProfile)
             eb:HighlightText()
             eb:SetFocus()
-            -- reset scroll to top
             if self.LS_ExportScroll then self.LS_ExportScroll:SetVerticalScroll(0) end
         end,
 
@@ -801,7 +866,6 @@ function LS.ShowExportPopup(serializedProfile)
         end,
 
         EditBoxOnEscapePressed = function(self)
-            -- support both builtin and our custom editbox escape behaviour
             local parent = self:GetParent()
             if parent and parent.Hide then parent:Hide() end
         end
